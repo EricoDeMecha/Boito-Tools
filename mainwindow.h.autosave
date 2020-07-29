@@ -43,7 +43,10 @@ private:
     void createComboWidget(QString status_string, int r);
     void saveTable();
     void closeEvent (QCloseEvent *event);
+    /*From start up*/
     QString current_user;
+    QStringList  engineers;
+    QStringList tools;
 
 private slots:
     void mainHandler();

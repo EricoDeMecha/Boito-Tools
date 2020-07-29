@@ -26,6 +26,8 @@ class Startup : public QDialog
 public:
     explicit Startup(QWidget *parent = nullptr);
     QString str_user;
+    QStringList tool_names;
+    QStringList engineers_names;
     ~Startup();
 
 private:
@@ -34,6 +36,7 @@ private:
     void pullUpStartDB();
     bool createMainConnection();
     void closeEvent (QCloseEvent *event);
+    void makeAvailable();
 private slots:
     void onEngineersCellClicked(int,int);
     void onToolsCellClicked(int,int);

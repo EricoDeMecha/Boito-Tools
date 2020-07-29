@@ -43,7 +43,21 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="search_lineEdit"/>
+         <widget class="QLineEdit" name="Name_lineEdit">
+          <property name="toolTip">
+           <string/>
+          </property>
+          <property name="placeholderText">
+           <string>Enter engineer's name</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="search_lineEdit">
+          <property name="placeholderText">
+           <string>Enter tool's name</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>

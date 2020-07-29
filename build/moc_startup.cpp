@@ -22,8 +22,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_Startup_t {
-    QByteArrayData data[1];
-    char stringdata0[8];
+    QByteArrayData data[6];
+    char stringdata0[69];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -32,10 +32,16 @@ struct qt_meta_stringdata_Startup_t {
     )
 static const qt_meta_stringdata_Startup_t qt_meta_stringdata_Startup = {
     {
-QT_MOC_LITERAL(0, 0, 7) // "Startup"
+QT_MOC_LITERAL(0, 0, 7), // "Startup"
+QT_MOC_LITERAL(1, 8, 22), // "onEngineersCellClicked"
+QT_MOC_LITERAL(2, 31, 0), // ""
+QT_MOC_LITERAL(3, 32, 18), // "onToolsCellClicked"
+QT_MOC_LITERAL(4, 51, 8), // "saveData"
+QT_MOC_LITERAL(5, 60, 8) // "quitMain"
 
     },
-    "Startup"
+    "Startup\0onEngineersCellClicked\0\0"
+    "onToolsCellClicked\0saveData\0quitMain"
 };
 #undef QT_MOC_LITERAL
 
@@ -45,22 +51,41 @@ static const uint qt_meta_data_Startup[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-       0,    0, // methods
+       4,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
        0,       // signalCount
 
+ // slots: name, argc, parameters, tag, flags
+       1,    2,   34,    2, 0x08 /* Private */,
+       3,    2,   39,    2, 0x08 /* Private */,
+       4,    0,   44,    2, 0x08 /* Private */,
+       5,    0,   45,    2, 0x08 /* Private */,
+
+ // slots: parameters
+    QMetaType::Void, QMetaType::Int, QMetaType::Int,    2,    2,
+    QMetaType::Void, QMetaType::Int, QMetaType::Int,    2,    2,
+    QMetaType::Void,
+    QMetaType::Void,
+
        0        // eod
 };
 
 void Startup::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
 {
-    Q_UNUSED(_o);
-    Q_UNUSED(_id);
-    Q_UNUSED(_c);
-    Q_UNUSED(_a);
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        auto *_t = static_cast<Startup *>(_o);
+        Q_UNUSED(_t)
+        switch (_id) {
+        case 0: _t->onEngineersCellClicked((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
+        case 1: _t->onToolsCellClicked((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
+        case 2: _t->saveData(); break;
+        case 3: _t->quitMain(); break;
+        default: ;
+        }
+    }
 }
 
 QT_INIT_METAOBJECT const QMetaObject Startup::staticMetaObject = { {
@@ -89,6 +114,17 @@ void *Startup::qt_metacast(const char *_clname)
 int Startup::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
     _id = QDialog::qt_metacall(_c, _id, _a);
+    if (_id < 0)
+        return _id;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        if (_id < 4)
+            qt_static_metacall(this, _c, _id, _a);
+        _id -= 4;
+    } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
+        if (_id < 4)
+            *reinterpret_cast<int*>(_a[0]) = -1;
+        _id -= 4;
+    }
     return _id;
 }
 QT_WARNING_POP

@@ -12,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
     /*Create a database connection*/
     // 1 -> create connection(check for drivers)
     if(!createConnection()){
-        QApplication::quit();
+        qApp->quit();
     }
     /*Customize the Table Widget*/
     // 1- >set a fixed row width
@@ -35,6 +35,8 @@ MainWindow::MainWindow(QWidget *parent)
         up_run.setModal(true);
         up_run.exec();
         current_user = up_run.str_user;
+        engineers = up_run.engineers_names;
+        tools = up_run.tool_names;
     });
     // 4-> Insert Widget to status if item is clicked and is empty
     connect(ui->main_tableWidget, SIGNAL(cellClicked(int, int)), this, SLOT(onCellClicked(int,int)));

@@ -34,6 +34,7 @@ public:
     QHBoxLayout *horizontalLayout;
     QSpacerItem *horizontalSpacer;
     QLabel *search_label;
+    QLineEdit *Name_lineEdit;
     QLineEdit *search_lineEdit;
     QTableWidget *main_tableWidget;
     QMenuBar *menubar;
@@ -61,6 +62,11 @@ public:
         search_label->setObjectName(QString::fromUtf8("search_label"));
 
         horizontalLayout->addWidget(search_label);
+
+        Name_lineEdit = new QLineEdit(centralwidget);
+        Name_lineEdit->setObjectName(QString::fromUtf8("Name_lineEdit"));
+
+        horizontalLayout->addWidget(Name_lineEdit);
 
         search_lineEdit = new QLineEdit(centralwidget);
         search_lineEdit->setObjectName(QString::fromUtf8("search_lineEdit"));
@@ -96,6 +102,11 @@ public:
     {
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "Boito Tools Inventory", nullptr));
         search_label->setText(QCoreApplication::translate("MainWindow", "Search", nullptr));
+#if QT_CONFIG(tooltip)
+        Name_lineEdit->setToolTip(QString());
+#endif // QT_CONFIG(tooltip)
+        Name_lineEdit->setPlaceholderText(QCoreApplication::translate("MainWindow", "Enter engineer's name", nullptr));
+        search_lineEdit->setPlaceholderText(QCoreApplication::translate("MainWindow", "Enter tool's name", nullptr));
     } // retranslateUi
 
 };
