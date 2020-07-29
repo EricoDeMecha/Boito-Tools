@@ -36,11 +36,13 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    QString select_all = "SELECT * FROM Tools";
+    QString select_all_partner = "";
     // sqlite
     bool createConnection();
     void saveToDb(QStringList _items);
     void deleteDbTable();
-    void pullUpDb();
+    void pullUpDb(QString  command , QString bind_value);
     void saveTable();
     /*main-application*/
     void closeEvent (QCloseEvent *event);
@@ -57,5 +59,8 @@ private:
 private slots:
     void mainHandler();
     void onCellClicked(int _row, int _col);
+    void nameSearch();
+    void toolSearch();
+    void restoreDisplay();
 };
 #endif // MAINWINDOW_H

@@ -28,7 +28,7 @@ MainWindow::MainWindow(QWidget *parent)
         ui->main_tableWidget->setHorizontalHeaderItem(i++,horizontalHeader);
     }
     // 3-> Pull up Db and update the table
-    pullUpDb();
+    pullUpDb(select_all, select_all_partner);
     // just here, get the start up window showing
     QTimer::singleShot(0, qApp,[this](){
         Startup up_run;
@@ -43,6 +43,21 @@ MainWindow::MainWindow(QWidget *parent)
 
     // save is manual
     connect(ui->save_pushButton,SIGNAL(clicked()),this, SLOT(mainHandler()));
+    // search with names
+        // first add auto-completion
+    QCompleter *name_comp = new QCompleter(engineers);
+    name_comp->setCaseSensitivity(Qt::CaseInsensitive);
+    name_comp->setFilterMode(Qt::MatchContains);
+    ui->Name_lineEdit->setCompleter(name_comp);
+    connect(ui->Name_lineEdit, SIGNAL(editingFinished()),this,SLOT(nameSearch()));
+    connect(ui->Name_lineEdit,SIGNAL(returnPressed()),this,SLOT(restoreDisplay()));
+    // Search with tools
+        // first add auto-completion
+    QCompleter *tool_comp =new QCompleter(tools);
+    tool_comp->setCaseSensitivity(Qt::CaseInsensitive);
+    tool_comp->setFilterMode(Qt::MatchContains);
+    ui->search_lineEdit->setCompleter(tool_comp);
+    connect(ui->search_lineEdit,SIGNAL(editingFinished()),this,SLOT(toolSearch()));
 }
 void MainWindow::onCellClicked(int _row, int _col){
     QTableWidgetItem *item = ui->main_tableWidget->item(_row,_col);
@@ -54,6 +69,9 @@ void MainWindow::onCellClicked(int _row, int _col){
                 // add today's date to column 0 of the new row
                 QString today = QDate::currentDate().toString("d/M/yyyy");
                 ui->main_tableWidget->setItem(_row,_col, new QTableWidgetItem(today));
+                // then add a new row
+                int current_rowCount = ui->main_tableWidget->rowCount();
+                ui->main_tableWidget->insertRow(current_rowCount);
                 // update others
                 createComboWidget("Pending", _row);
                 tools_autoComplete(QString(""), _row);
@@ -89,7 +107,7 @@ bool MainWindow::createConnection(){
     return true;
 }
 
-void MainWindow::pullUpDb(){
+void MainWindow::pullUpDb(QString  command , QString bind_value){
     // clear grounds
     ui->main_tableWidget->clearContents();
     ui->main_tableWidget->setRowCount(0);
@@ -104,7 +122,10 @@ void MainWindow::pullUpDb(){
     ui->main_tableWidget->setRowCount((row_count + 4));// 4 Additional empty rows
     // Bring up all the data to table
     QSqlQuery pull_query(QSqlDatabase::database("conn_main"));
-    pull_query.prepare("SELECT * FROM Tools");
+    pull_query.prepare(command);
+    if(!bind_value.isEmpty()){
+        pull_query.bindValue(0,bind_value);
+    }
     if(pull_query.exec()){
         int date_no = pull_query.record().indexOf("Date");
         int item_no = pull_query.record().indexOf("Item");
@@ -183,7 +204,7 @@ void MainWindow::engineers_autoComplete(QString t_item,int r)
 void MainWindow::mainHandler(){
     deleteDbTable();// delete db table before saving new
     saveTable();// saves the table
-    pullUpDb();// update the table again
+    pullUpDb(select_all, select_all_partner);// update the table again
 }
 
 void MainWindow::saveTable(){
@@ -278,7 +299,37 @@ void MainWindow::closeEvent (QCloseEvent *event){
         event->accept();
     }
 }
+void MainWindow::nameSearch()
+{
+    QString search_item = ui->Name_lineEdit->text();
+    if(!search_item.isEmpty()){
+        ui->save_pushButton->setEnabled(false);
+        QString command_line = "SELECT * FROM Tools WHERE Name = ? ";
+        pullUpDb(command_line, search_item);
+    }
+}
 
+void MainWindow::toolSearch()
+{
+    QString  search_item = ui->search_lineEdit->text();
+    if(!search_item.isEmpty()){
+         ui->save_pushButton->setEnabled(false);
+        QList<QTableWidgetItem *> search_results = ui->main_tableWidget->findItems(search_item,Qt::MatchEndsWith);
+        foreach(QTableWidgetItem *item, search_results){
+            int row = item->row();
+            for(int i = 0; i < ui->main_tableWidget->columnCount();i++){
+                QTableWidgetItem *row_item = ui->main_tableWidget->item(row,i);
+                row_item->setBackground(Qt::blue);
+            }
+        }
+    }
+}
+
+void MainWindow::restoreDisplay()
+{
+    pullUpDb(select_all,select_all_partner);
+    ui->save_pushButton->setEnabled(true);
+}
 MainWindow::~MainWindow()
 {
     delete ui;
