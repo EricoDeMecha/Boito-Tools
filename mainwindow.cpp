@@ -41,29 +41,28 @@ MainWindow::MainWindow(QWidget *parent)
     // 4-> Insert Widget to status if item is clicked and is empty
     connect(ui->main_tableWidget, SIGNAL(cellClicked(int, int)), this, SLOT(onCellClicked(int,int)));
 
-    QTimer *timer = new QTimer();
-    connect(timer, SIGNAL(timeout()),this,SLOT(mainHandler()));
-    timer->start(60000);
+    // save is manual
+    connect(ui->save_pushButton,SIGNAL(clicked()),this, SLOT(mainHandler()));
 }
 void MainWindow::onCellClicked(int _row, int _col){
     QTableWidgetItem *item = ui->main_tableWidget->item(_row,_col);
     if(!item || item->text().isEmpty()){
-        if(_col == 7){
-            createComboWidget("Returned", _row);
-        }else{
-            createComboWidget("Pending", _row);
-            tools_autoComplete(QString(""), _row);
-            engineers_autoComplete(QString(""),_row);
-        }
-
-        if(_col == 0){
-            // add today's date to column 0 of the new row
-            QString today = QDate::currentDate().toString("d/M/yyyy");
-            ui->main_tableWidget->setItem(_row,_col, new QTableWidgetItem(today));
-        }else if (_col == 8) {
-            ui->main_tableWidget->setItem(_row,_col, new QTableWidgetItem(current_user));
-        }else if(_col == 9){
-            ui->main_tableWidget->setItem(_row,_col, new QTableWidgetItem(current_user));
+        if((_col != 7) || (_col != 0) || (_col != 8) || (_col != 9)){
+            if(_col == 7){
+                createComboWidget("Returned", _row);
+            }else if(_col == 0){
+                // add today's date to column 0 of the new row
+                QString today = QDate::currentDate().toString("d/M/yyyy");
+                ui->main_tableWidget->setItem(_row,_col, new QTableWidgetItem(today));
+                // update others
+                createComboWidget("Pending", _row);
+                tools_autoComplete(QString(""), _row);
+                engineers_autoComplete(QString(""),_row);
+            }else if (_col == 8) {
+                ui->main_tableWidget->setItem(_row,_col, new QTableWidgetItem(current_user));
+            }else if(_col == 9){
+                ui->main_tableWidget->setItem(_row,_col, new QTableWidgetItem(current_user));
+            }
         }
     }
 }
@@ -106,44 +105,45 @@ void MainWindow::pullUpDb(){
     // Bring up all the data to table
     QSqlQuery pull_query(QSqlDatabase::database("conn_main"));
     pull_query.prepare("SELECT * FROM Tools");
-    int date_no = pull_query.record().indexOf("Date");
-    int item_no = pull_query.record().indexOf("Item");
-    int no_no = pull_query.record().indexOf("No");
-    int section_no = pull_query.record().indexOf("Section");
-    int name_no = pull_query.record().indexOf("Name");
-    int sign_no = pull_query.record().indexOf("Sign");
-    int status_no = pull_query.record().indexOf("Status");
-    int condition_no = pull_query.record().indexOf("Condition");
-    int issued_no = pull_query.record().indexOf("Issued_by");
-    int received_no = pull_query.record().indexOf("Received_by");
+    if(pull_query.exec()){
+        int date_no = pull_query.record().indexOf("Date");
+        int item_no = pull_query.record().indexOf("Item");
+        int no_no = pull_query.record().indexOf("No");
+        int section_no = pull_query.record().indexOf("Section");
+        int name_no = pull_query.record().indexOf("Name");
+        int sign_no = pull_query.record().indexOf("Sign");
+        int status_no = pull_query.record().indexOf("Status");
+        int condition_no = pull_query.record().indexOf("Condition");
+        int issued_no = pull_query.record().indexOf("Issued_by");
+        int received_no = pull_query.record().indexOf("Received_by");
+        int r = 0;
+        while(pull_query.next()){
+            QStringList db_items;
+            db_items << pull_query.value(date_no).toString();
+            db_items << pull_query.value(item_no).toString();
+            db_items << pull_query.value(no_no).toString();
+            db_items << pull_query.value(section_no).toString();
+            db_items << pull_query.value(name_no).toString();
+            db_items << pull_query.value(sign_no).toString();
+            db_items << pull_query.value(status_no).toString();
+            db_items << pull_query.value(condition_no).toString();
+            db_items << pull_query.value(issued_no).toString();
+            db_items << pull_query.value(received_no).toString();
 
-    int r = 0;
-    while(pull_query.next()){
-        QStringList db_items;
-        db_items << pull_query.value(date_no).toString();
-        db_items << pull_query.value(item_no).toString();
-        db_items << pull_query.value(no_no).toString();
-        db_items << pull_query.value(section_no).toString();
-        db_items << pull_query.value(name_no).toString();
-        db_items << pull_query.value(sign_no).toString();
-        db_items << pull_query.value(status_no).toString();
-        db_items << pull_query.value(condition_no).toString();
-        db_items << pull_query.value(issued_no).toString();
-        db_items << pull_query.value(received_no).toString();
-
-        for(int c = 0; c < ui->main_tableWidget->columnCount(); c++){
-            if(c == 6){
-                // insert the widget
-                createComboWidget(db_items[c],r);
-            }else if(c == 1){
-                tools_autoComplete(db_items[c], r);
-            }else if(c == 4){
-                engineers_autoComplete(db_items[c], r);
-            }else{
-                ui->main_tableWidget->setItem(r,c, new QTableWidgetItem(db_items[c]));
+            for(int c = 0; c < ui->main_tableWidget->columnCount(); c++){
+                if(c == 6){
+                    // insert the widget
+                    createComboWidget(db_items[c],r);
+                }else if(c == 1){
+                    tools_autoComplete(db_items[c], r);
+                }else if(c == 4){
+                    engineers_autoComplete(db_items[c], r);
+                }else{
+                    ui->main_tableWidget->setItem(r,c, new QTableWidgetItem(db_items[c]));
+                }
             }
+            r++;
         }
-        r++;
     }
 }
 void MainWindow::createComboWidget(QString status_string, int r){
@@ -230,10 +230,20 @@ void MainWindow::saveToDb(QStringList _items){
          entry_query.bindValue(i,_items[i]);
      }
      if(entry_query.exec()){
-         ui->statusbar->showMessage("Saved", 1000);
+         updateLabel("Success", "save=success");
      }else{
-         ui->statusbar->showMessage(entry_query.lastError().text(), 3000);
+         updateLabel("Error",entry_query.lastError().text());
          }
+}
+void MainWindow::updateLabel(QString _type, QString _ref)
+{
+    QTime ct = QTime::currentTime();
+    QString _time = ct.toString("hh:mm:ss.zzz");
+    QString _lastSave = "last saved";
+    ui->statusbar->showMessage(_ref);
+
+    QString lbl_text = _time + " : " + _lastSave+ "<"+_type+"> ;(StatusBar)";
+    ui->save_label->setText(lbl_text);
 }
 void MainWindow::deleteDbTable(){
            QSqlQuery  del_query(QSqlDatabase::database("conn_main"));

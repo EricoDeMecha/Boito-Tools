@@ -17,6 +17,7 @@
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
+#include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QTableWidget>
@@ -37,6 +38,10 @@ public:
     QLineEdit *Name_lineEdit;
     QLineEdit *search_lineEdit;
     QTableWidget *main_tableWidget;
+    QHBoxLayout *horizontalLayout_2;
+    QLabel *save_label;
+    QSpacerItem *horizontalSpacer_2;
+    QPushButton *save_pushButton;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -84,6 +89,31 @@ public:
 
         verticalLayout_2->addLayout(verticalLayout);
 
+        horizontalLayout_2 = new QHBoxLayout();
+        horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
+        horizontalLayout_2->setContentsMargins(-1, -1, -1, 0);
+        save_label = new QLabel(centralwidget);
+        save_label->setObjectName(QString::fromUtf8("save_label"));
+
+        horizontalLayout_2->addWidget(save_label);
+
+        horizontalSpacer_2 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_2->addItem(horizontalSpacer_2);
+
+        save_pushButton = new QPushButton(centralwidget);
+        save_pushButton->setObjectName(QString::fromUtf8("save_pushButton"));
+        QFont font;
+        font.setBold(true);
+        font.setUnderline(true);
+        font.setWeight(75);
+        save_pushButton->setFont(font);
+
+        horizontalLayout_2->addWidget(save_pushButton);
+
+
+        verticalLayout_2->addLayout(horizontalLayout_2);
+
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
@@ -107,6 +137,8 @@ public:
 #endif // QT_CONFIG(tooltip)
         Name_lineEdit->setPlaceholderText(QCoreApplication::translate("MainWindow", "Enter engineer's name", nullptr));
         search_lineEdit->setPlaceholderText(QCoreApplication::translate("MainWindow", "Enter tool's name", nullptr));
+        save_label->setText(QString());
+        save_pushButton->setText(QCoreApplication::translate("MainWindow", "Save", nullptr));
     } // retranslateUi
 
 };

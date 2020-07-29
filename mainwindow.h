@@ -18,6 +18,7 @@
 #include <QDebug>
 #include <QHBoxLayout>
 #include <QCloseEvent>
+#include <QTime>
 
 
 QT_BEGIN_NAMESPACE
@@ -41,7 +42,9 @@ private:
     void deleteDbTable();
     void pullUpDb();
     void saveTable();
+    /*main-application*/
     void closeEvent (QCloseEvent *event);
+    void updateLabel(QString _type, QString _ref);
     /*From start up*/
     QString current_user;
     QStringList  engineers;
