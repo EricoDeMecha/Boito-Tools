@@ -12,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
     /*Create a database connection*/
     // 1 -> create connection(check for drivers)
     if(!createConnection()){
-        QApplication::quit();
+        qApp->quit();
     }
     /*Customize the Table Widget*/
     // 1- >set a fixed row width
@@ -35,6 +35,8 @@ MainWindow::MainWindow(QWidget *parent)
         up_run.setModal(true);
         up_run.exec();
         current_user = up_run.str_user;
+        engineers = up_run.engineers_names;
+        tools = up_run.tool_names;
     });
     // 4-> Insert Widget to status if item is clicked and is empty
     connect(ui->main_tableWidget, SIGNAL(cellClicked(int, int)), this, SLOT(onCellClicked(int,int)));
@@ -50,6 +52,8 @@ void MainWindow::onCellClicked(int _row, int _col){
             createComboWidget("Returned", _row);
         }else{
             createComboWidget("Pending", _row);
+            tools_autoComplete(QString(""), _row);
+            engineers_autoComplete(QString(""),_row);
         }
 
         if(_col == 0){
@@ -131,6 +135,10 @@ void MainWindow::pullUpDb(){
             if(c == 6){
                 // insert the widget
                 createComboWidget(db_items[c],r);
+            }else if(c == 1){
+                tools_autoComplete(db_items[c], r);
+            }else if(c == 4){
+                engineers_autoComplete(db_items[c], r);
             }else{
                 ui->main_tableWidget->setItem(r,c, new QTableWidgetItem(db_items[c]));
             }
@@ -149,6 +157,29 @@ void MainWindow::createComboWidget(QString status_string, int r){
     }
     ui->main_tableWidget->setCellWidget(r,6,combo);
 }
+
+void MainWindow::tools_autoComplete(QString t_item,int r)
+{
+    QLineEdit *tools_edit = new QLineEdit();
+    QCompleter *tool_completer = new QCompleter(tools);
+    tool_completer->setCaseSensitivity(Qt::CaseInsensitive);
+    tool_completer->setFilterMode(Qt::MatchContains);
+    tools_edit->setCompleter(tool_completer);
+    tools_edit->setText(t_item);
+    ui->main_tableWidget->setCellWidget(r,1,tools_edit);
+}
+
+void MainWindow::engineers_autoComplete(QString t_item,int r)
+{
+    QLineEdit *engineer_edit = new QLineEdit();
+    QCompleter *engineer_completer = new QCompleter(engineers);
+    engineer_completer->setCaseSensitivity(Qt::CaseInsensitive);
+    engineer_completer->setFilterMode(Qt::MatchContains);
+    engineer_edit->setCompleter(engineer_completer);
+    engineer_edit->setText(t_item);
+    ui->main_tableWidget->setCellWidget(r,4,engineer_edit);
+}
+
 void MainWindow::mainHandler(){
     deleteDbTable();// delete db table before saving new
     saveTable();// saves the table
@@ -169,6 +200,14 @@ void MainWindow::saveTable(){
             if(c == 6){
                 QComboBox *myCB = qobject_cast<QComboBox*>(ui->main_tableWidget->cellWidget(r,6));
                 item_string  = myCB->currentText();
+                db_items << item_string;
+            }else if(c == 1){
+                QLineEdit *tool_item = qobject_cast<QLineEdit*>(ui->main_tableWidget->cellWidget(r,1));
+                item_string = tool_item->text();
+                db_items << item_string;
+            }else if(c == 4){
+                QLineEdit *engineer_item = qobject_cast<QLineEdit*>(ui->main_tableWidget->cellWidget(r,4));
+                item_string = engineer_item->text();
                 db_items << item_string;
             }else{
                 if(!item || item->text().isEmpty())

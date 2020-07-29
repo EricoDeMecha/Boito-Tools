@@ -10,7 +10,7 @@ Startup::Startup(QWidget *parent) :
     this->setWindowTitle("Start up Window");
     /*Create a DB connection*/
     if(!createMainConnection()){
-        QApplication::quit();
+        qApp->quit();
     }
     /*Customize the engineers table*/
     // 1- >set a fixed row width
@@ -118,7 +118,6 @@ void Startup::pullUpStartDB()
         while(q_users.next()){
             user_names << q_users.value(0).toString();
         }
-        qDebug() << user_names;
     }
 }
 
@@ -157,7 +156,9 @@ void Startup::saveData()
         }
        QSqlQuery q_engineers(QSqlDatabase::database("conn_start"));
        q_engineers.prepare("INSERT INTO Engineers VALUES(?)");
-       q_engineers.bindValue(0,ui->engineers_tableWidget->item(r,0)->text());
+       QString engineer_name = ui->engineers_tableWidget->item(r,0)->text();
+       engineers_names << engineer_name; // Store for mainWindow
+       q_engineers.bindValue(0,engineer_name);
        q_engineers.exec();
     }
 
@@ -169,7 +170,9 @@ void Startup::saveData()
         }
         QSqlQuery q_tools(QSqlDatabase::database("conn_start"));
         q_tools.prepare("INSERT INTO MainTools VALUES(?,?)");
-        q_tools.bindValue(0,ui->tools_tableWidget->item(r,0)->text());
+        QString tool_name = ui->tools_tableWidget->item(r,0)->text();
+        tool_names << tool_name; // store for mainWindow;
+        q_tools.bindValue(0,tool_name);
         q_tools.bindValue(1, ui->tools_tableWidget->item(r,1)->text());
         q_tools.exec();
     }
