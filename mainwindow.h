@@ -19,7 +19,12 @@
 #include <QHBoxLayout>
 #include <QCloseEvent>
 #include <QTime>
-
+#include <QDir>
+#include <QFile>
+#include <QTextDocument>
+#include <QTextTableCell>
+#include <QPrinter>
+#include <QDesktopServices>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -36,9 +41,16 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    /*container*/
+    QHash<QString, int> pending_tools_audit;
+    /*Print counter*/
+    int i = 0;
+    /*Queries*/
     QString select_all = "SELECT * FROM Tools";
     QString select_all_partner = "";
     // sqlite
+    void checkForDrivers();
+    void checkForDatabases();
     bool createConnection();
     void saveToDb(QStringList _items);
     void deleteDbTable();
@@ -51,16 +63,19 @@ private:
     QString current_user;
     QStringList  engineers;
     QStringList tools;
+    QHash<QString, int>  original_tools_audit;
     /*Let's create widgets*/
     void createComboWidget(QString status_string, int r);
     void tools_autoComplete(QString t_item,int r);
     void engineers_autoComplete(QString t_item,int r);
-
 private slots:
     void mainHandler();
     void onCellClicked(int _row, int _col);
     void nameSearch();
     void toolSearch();
     void restoreDisplay();
+    void onPendingClicked();
+    void onPrintClicked();
+    void onAuditClicked();
 };
 #endif // MAINWINDOW_H

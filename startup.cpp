@@ -171,16 +171,32 @@ void Startup::saveData()
         QSqlQuery q_tools(QSqlDatabase::database("conn_start"));
         q_tools.prepare("INSERT INTO MainTools VALUES(?,?)");
         QString tool_name = ui->tools_tableWidget->item(r,0)->text();
+        QString tool_no = ui->tools_tableWidget->item(r,1)->text();
+        if(tool_no.toInt()){
+            int tool_noInt  = tool_no.toInt();
+             if(tools_audit.contains(tool_name)){
+                 int val = tools_audit.value(tool_name);
+                 tool_noInt += val;
+             }
+             tools_audit[tool_name] = tool_noInt;
+        }else{
+            QMessageBox::warning(nullptr,QObject::tr("Warning"),
+                                 QObject::tr("\n Some of your tool numbers are not actually numbers \n"
+                                             "I am gonna continue but some functionality is gonna be deducted"), QMessageBox::Cancel);
+        }
         tool_names << tool_name; // store for mainWindow;
         q_tools.bindValue(0,tool_name);
-        q_tools.bindValue(1, ui->tools_tableWidget->item(r,1)->text());
+        q_tools.bindValue(1, tool_no);
         q_tools.exec();
     }
     // Users Line Edit
     str_user = ui->user_lineEdit->text();
     if(str_user.isEmpty()){
-        QMessageBox::warning(nullptr, QObject::tr("Warning"), QObject::tr("User Line edit is empty"), QMessageBox::Cancel);
+        QMessageBox::warning(nullptr, QObject::tr("Warning"), QObject::tr("User Line edit is empty\n"
+                                                                          "Your changes are obsolete"), QMessageBox::Cancel);
+        qApp->quit();
     }
+
 }
 void Startup::quitMain(){
     qApp->quit();

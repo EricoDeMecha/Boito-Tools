@@ -41,6 +41,9 @@ public:
     QHBoxLayout *horizontalLayout_2;
     QLabel *save_label;
     QSpacerItem *horizontalSpacer_2;
+    QPushButton *audit_pushButton;
+    QPushButton *print_pushButton;
+    QPushButton *pending_pushButton;
     QPushButton *save_pushButton;
     QMenuBar *menubar;
     QStatusBar *statusbar;
@@ -50,8 +53,14 @@ public:
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
         MainWindow->resize(727, 458);
+        MainWindow->setStyleSheet(QString::fromUtf8("QMainWindow{\n"
+"	background-color: rgb(78, 154, 6);\n"
+"}"));
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
+        centralwidget->setStyleSheet(QString::fromUtf8("centralwidget{\n"
+"	background-color: rgb(115, 210, 22);\n"
+"}"));
         verticalLayout_2 = new QVBoxLayout(centralwidget);
         verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
         verticalLayout = new QVBoxLayout();
@@ -101,13 +110,45 @@ public:
 
         horizontalLayout_2->addItem(horizontalSpacer_2);
 
+        audit_pushButton = new QPushButton(centralwidget);
+        audit_pushButton->setObjectName(QString::fromUtf8("audit_pushButton"));
+        audit_pushButton->setStyleSheet(QString::fromUtf8("QPushButton{\n"
+"	background-color:rgb(191, 64, 172);\n"
+"}"));
+
+        horizontalLayout_2->addWidget(audit_pushButton);
+
+        print_pushButton = new QPushButton(centralwidget);
+        print_pushButton->setObjectName(QString::fromUtf8("print_pushButton"));
+        print_pushButton->setStyleSheet(QString::fromUtf8("QPushButton{\n"
+"	background-color:rgb(193, 125, 17)\n"
+"}"));
+
+        horizontalLayout_2->addWidget(print_pushButton);
+
+        pending_pushButton = new QPushButton(centralwidget);
+        pending_pushButton->setObjectName(QString::fromUtf8("pending_pushButton"));
+        QFont font;
+        font.setBold(false);
+        font.setUnderline(false);
+        font.setWeight(50);
+        pending_pushButton->setFont(font);
+        pending_pushButton->setStyleSheet(QString::fromUtf8("QPushButton{\n"
+"	background-color:rgb(237, 212, 0);\n"
+"}"));
+
+        horizontalLayout_2->addWidget(pending_pushButton);
+
         save_pushButton = new QPushButton(centralwidget);
         save_pushButton->setObjectName(QString::fromUtf8("save_pushButton"));
-        QFont font;
-        font.setBold(true);
-        font.setUnderline(true);
-        font.setWeight(75);
-        save_pushButton->setFont(font);
+        QFont font1;
+        font1.setBold(true);
+        font1.setUnderline(true);
+        font1.setWeight(75);
+        save_pushButton->setFont(font1);
+        save_pushButton->setStyleSheet(QString::fromUtf8("QPushButton{\n"
+"	background-color: rgb(52, 101, 164);\n"
+"}"));
 
         horizontalLayout_2->addWidget(save_pushButton);
 
@@ -136,8 +177,11 @@ public:
         Name_lineEdit->setToolTip(QString());
 #endif // QT_CONFIG(tooltip)
         Name_lineEdit->setPlaceholderText(QCoreApplication::translate("MainWindow", "Enter engineer's name", nullptr));
-        search_lineEdit->setPlaceholderText(QCoreApplication::translate("MainWindow", "Enter tool's name", nullptr));
+        search_lineEdit->setPlaceholderText(QCoreApplication::translate("MainWindow", "Enter specifying item.", nullptr));
         save_label->setText(QString());
+        audit_pushButton->setText(QCoreApplication::translate("MainWindow", "Audit Tools", nullptr));
+        print_pushButton->setText(QCoreApplication::translate("MainWindow", "Print Doc", nullptr));
+        pending_pushButton->setText(QCoreApplication::translate("MainWindow", "Pending", nullptr));
         save_pushButton->setText(QCoreApplication::translate("MainWindow", "Save", nullptr));
     } // retranslateUi
 

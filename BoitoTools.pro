@@ -1,6 +1,6 @@
 QT       += core gui sql
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 CONFIG += c++11
 
@@ -25,9 +25,10 @@ HEADERS += \
     startup.h
 
 FORMS += \
-    mainwindow.ui \
-    startup.ui
+    browse.ui \
+    mainwindow.ui
 
+win32:RC_ICONS += app_icon.ico
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin

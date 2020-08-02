@@ -13,7 +13,17 @@
   <property name="windowTitle">
    <string>Boito Tools Inventory</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QMainWindow{
+	background-color: rgb(78, 154, 6);
+}</string>
+  </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="styleSheet">
+    <string notr="true">centralwidget{
+	background-color: rgb(115, 210, 22);
+}</string>
+   </property>
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
@@ -55,7 +65,7 @@
         <item>
          <widget class="QLineEdit" name="search_lineEdit">
           <property name="placeholderText">
-           <string>Enter tool's name</string>
+           <string>Enter specifying item.</string>
           </property>
          </widget>
         </item>
@@ -92,6 +102,49 @@
        </spacer>
       </item>
       <item>
+       <widget class="QPushButton" name="audit_pushButton">
+        <property name="styleSheet">
+         <string notr="true">QPushButton{
+	background-color:rgb(191, 64, 172);
+}</string>
+        </property>
+        <property name="text">
+         <string>Audit Tools</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="print_pushButton">
+        <property name="styleSheet">
+         <string notr="true">QPushButton{
+	background-color:rgb(193, 125, 17)
+}</string>
+        </property>
+        <property name="text">
+         <string>Print Doc</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pending_pushButton">
+        <property name="font">
+         <font>
+          <weight>50</weight>
+          <bold>false</bold>
+          <underline>false</underline>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QPushButton{
+	background-color:rgb(237, 212, 0);
+}</string>
+        </property>
+        <property name="text">
+         <string>Pending</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="save_pushButton">
         <property name="font">
          <font>
@@ -99,6 +152,11 @@
           <bold>true</bold>
           <underline>true</underline>
          </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QPushButton{
+	background-color: rgb(52, 101, 164);
+}</string>
         </property>
         <property name="text">
          <string>Save</string>

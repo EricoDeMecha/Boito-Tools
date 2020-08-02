@@ -28,6 +28,8 @@ public:
     QString str_user;
     QStringList tool_names;
     QStringList engineers_names;
+
+    QHash<QString, int> tools_audit;
     ~Startup();
 
 private:
