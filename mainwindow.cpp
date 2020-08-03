@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "startup.h"
 
 #include <QFileDialog>
 #include <QHeaderView>
@@ -14,12 +13,51 @@ MainWindow::MainWindow(QWidget *parent)
     /*Check for sqlite drivers and database files */
     checkForDrivers();
     checkForDatabases();
-    //QTimer::singleShot(0, this, SLOT(showFullScreen()));
-    /*Create a database connection*/
-    // 1 -> create connection(check for drivers)
-    if(!createConnection()){
+    /*show first page*/
+    ui->stackedWidget->setCurrentIndex(0);
+    /*Do the stuff related to the first page*/
+    ui->stackedWidget->setWindowTitle("Start-Up Window");
+    /*Connect to the Up_db*/
+    if(!createMainConnection()){
         qApp->quit();
     }
+    /*Customize the engineers table*/
+    // 1- >set a fixed row width
+    /*Engineers table*/
+    QHeaderView *eng_verticalHeader = ui->engineers_tableWidget->verticalHeader();
+    eng_verticalHeader->setSectionResizeMode(QHeaderView::Fixed);
+    eng_verticalHeader->setDefaultSectionSize(38);
+
+    QTableWidgetItem *engineers_horizontalHeader = new QTableWidgetItem("Names");
+    ui->engineers_tableWidget->setColumnCount(1);
+    ui->engineers_tableWidget->setHorizontalHeaderItem(0,engineers_horizontalHeader);
+    ui->engineers_tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+   /*Tools table*/
+    QHeaderView *tools_verticalHeader = ui->tools_tableWidget->verticalHeader();
+    tools_verticalHeader->setSectionResizeMode(QHeaderView::Fixed);
+    tools_verticalHeader->setDefaultSectionSize(38);
+
+    QStringList tools_tableItems = {"Item","Number"};
+    ui->tools_tableWidget->setColumnCount(tools_tableItems.size());
+    int i = 0;
+    foreach (QString item, tools_tableItems) {
+        QTableWidgetItem *tools_horizontalHeader = new QTableWidgetItem(item);
+        ui->tools_tableWidget->setHorizontalHeaderItem(i++,tools_horizontalHeader);
+    }
+    ui->tools_tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    /*Pull the startup db*/
+    pullUpStartDB();
+    /*Add the autocompletion to user's lineEdi*/
+    QCompleter *user_completer = new QCompleter(user_names);
+    user_completer->setCaseSensitivity(Qt::CaseInsensitive);
+    user_completer->setFilterMode(Qt::MatchContains);
+    ui->user_lineEdit->setCompleter(user_completer);
+    /*connect*/
+    connect(ui->engineers_tableWidget, SIGNAL(cellClicked(int, int)), this, SLOT(onEngineersCellClicked(int,int)));
+    connect(ui->tools_tableWidget,SIGNAL(cellClicked(int, int)), this,SLOT(onToolsCellClicked(int,int)));
+    connect(ui->ok_pushButton, SIGNAL(clicked()),this,SLOT(saveData()));
+    connect(ui->cancel_pushButton,SIGNAL(clicked()), this,SLOT(quitMain()));
+    /*************************************************************************************************************************/
     /*Customize the Table Widget*/
     // 1- >set a fixed row width
     QHeaderView *verticalHeader = ui->main_tableWidget->verticalHeader();
@@ -28,36 +66,24 @@ MainWindow::MainWindow(QWidget *parent)
     // 2 -> add the column headers
     QStringList horizontalHeaderItems = {"Date","Item", "No.","Section","Name","Sign","Status", "Condition","Issued By","Received By"};
     ui->main_tableWidget->setColumnCount(horizontalHeaderItems.size());
-    int i = 0;
+    int _i = 0;
     foreach (QString item, horizontalHeaderItems) {
         QTableWidgetItem *horizontalHeader = new QTableWidgetItem(item);
-        ui->main_tableWidget->setHorizontalHeaderItem(i++,horizontalHeader);
+        ui->main_tableWidget->setHorizontalHeaderItem(_i++,horizontalHeader);
     }
-    // 3-> Pull up Db and update the table
-    pullUpDb(select_all, select_all_partner);
-    // just here, get the start up window showing
-    QTimer::singleShot(0, qApp,[this](){
-        Startup up_run;
-        up_run.setModal(true);
-        up_run.exec();
-        current_user = up_run.str_user;
-        engineers = up_run.engineers_names;
-        tools = up_run.tool_names;
-        // search with names
-                // first add auto-completion
-            QCompleter *name_comp = new QCompleter(engineers);
-            name_comp->setCaseSensitivity(Qt::CaseInsensitive);
-            name_comp->setFilterMode(Qt::MatchContains);
-            ui->Name_lineEdit->setCompleter(name_comp);
-        // Search with items
+    // search with names
             // first add auto-completion
-            QCompleter *tool_comp =new QCompleter(tools);
-            tool_comp->setCaseSensitivity(Qt::CaseInsensitive);
-            tool_comp->setFilterMode(Qt::MatchContains);
-            ui->search_lineEdit->setCompleter(tool_comp);
-        // copy start_up QHash to a main QHash
-            original_tools_audit = up_run.tools_audit;
-    });
+        QCompleter *name_comp = new QCompleter(engineers_names);
+        name_comp->setCaseSensitivity(Qt::CaseInsensitive);
+        name_comp->setFilterMode(Qt::MatchContains);
+        ui->Name_lineEdit->setCompleter(name_comp);
+    // Search with items
+        // first add auto-completion
+        QCompleter *tool_comp =new QCompleter(tool_names);
+        tool_comp->setCaseSensitivity(Qt::CaseInsensitive);
+        tool_comp->setFilterMode(Qt::MatchContains);
+        ui->search_lineEdit->setCompleter(tool_comp);
+
     // 4-> Insert Widget to status if cell is clicked and is empty
     connect(ui->main_tableWidget, SIGNAL(cellClicked(int, int)), this, SLOT(onCellClicked(int,int)));
 
@@ -74,6 +100,168 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->print_pushButton, SIGNAL(clicked()), this, SLOT(onPrintClicked()));
     // audit tools
     connect(ui->audit_pushButton, SIGNAL(clicked()), this, SLOT(onAuditClicked()));
+}
+bool MainWindow::createMainConnection()
+{
+    const QString DRIVER("QSQLITE");
+    up_db = QSqlDatabase::addDatabase(DRIVER,"conn_start");
+    up_db.setDatabaseName("up_db");
+    if(!up_db.open()){
+        QMessageBox::critical(nullptr, QObject::tr("Critical Error"),
+                  QObject::tr("Could not find db file \n\n"
+                              "Click Cancel to exit."), QMessageBox::Cancel);
+        return false;
+    }
+    return true;
+}
+void MainWindow::pullUpStartDB()
+{
+    ui->engineers_tableWidget->clearContents();
+    ui->engineers_tableWidget->setRowCount(0);
+
+    QSqlQuery engineers_count_query(QSqlDatabase::database("conn_start"));
+    // count the number of rows in the db
+    engineers_count_query.prepare("SELECT COUNT(1) FROM Engineers");
+    int engineers_row_count = 0;
+    if(engineers_count_query.exec() && engineers_count_query.seek(0)){
+         engineers_row_count= engineers_count_query.value(0).toString().toInt();
+    }
+    ui->engineers_tableWidget->setRowCount((engineers_row_count + 1));// 4 Additional empty rows
+    QSqlQuery engineers_query(QSqlDatabase::database("conn_start"));
+    engineers_query.prepare("SELECT * FROM Engineers");
+    if(engineers_query.exec()){
+        int r = 0, c = 0;
+        while(engineers_query.next()){
+            ui->engineers_tableWidget->setItem(r,c, new QTableWidgetItem(engineers_query.value(0).toString()));
+            r++;
+        }
+    }
+    /*Tools*/
+    ui->tools_tableWidget->clearContents();
+    ui->tools_tableWidget->setRowCount(0);
+
+    QSqlQuery tools_count_query(QSqlDatabase::database("conn_start"));
+    // count the number of rows in the db
+    tools_count_query.prepare("SELECT COUNT(1) FROM MainTools");
+    int tools_row_count = 0;
+    if(tools_count_query.exec() && tools_count_query.seek(0)){
+         tools_row_count= tools_count_query.value(0).toString().toInt();
+    }
+    ui->tools_tableWidget->setRowCount((tools_row_count + 2));// 4 Additional empty rows
+
+    QSqlQuery tool_query(QSqlDatabase::database("conn_start"));
+    tool_query.prepare("SELECT * FROM MainTools");
+    if(tool_query.exec()){
+        int item_no = tool_query.record().indexOf("Items");
+        int no_no = tool_query.record().indexOf("Num");
+        int _r = 0 , _c0 = 0, _c1 = 1;
+        while(tool_query.next()){
+            ui->tools_tableWidget->setItem(_r,_c0,new QTableWidgetItem(tool_query.value(item_no).toString()));
+            ui->tools_tableWidget->setItem(_r,_c1,new QTableWidgetItem(tool_query.value(no_no).toString()));
+            _r++;
+        }
+    }
+    /*Users*/
+    QSqlQuery q_users(QSqlDatabase::database("conn_start"));
+    q_users.prepare("SELECT Names FROM Users");
+    if(q_users.exec()){
+        while(q_users.next()){
+            user_names << q_users.value(0).toString();
+        }
+    }
+}
+void MainWindow::onEngineersCellClicked(int r, int c)
+{
+    QTableWidgetItem *engineers_item = ui->engineers_tableWidget->item(r,c);
+    if(!engineers_item ||  engineers_item->text().isEmpty()){
+        int current_rowCount = ui->engineers_tableWidget->rowCount();
+        ui->engineers_tableWidget->insertRow(current_rowCount);
+    }
+}
+
+void MainWindow::onToolsCellClicked(int r, int c)
+{
+    if(c == 0){
+        QTableWidgetItem *tools_item = ui->tools_tableWidget->item(r,c);
+        if(!tools_item ||  tools_item->text().isEmpty()){
+            int current_rowCount = ui->tools_tableWidget->rowCount();
+            ui->tools_tableWidget->insertRow(current_rowCount);// row
+        }
+    }
+}
+
+void MainWindow::saveData()
+{
+    QSqlQuery  del_query(QSqlDatabase::database("conn_start"));
+    del_query.exec("DELETE FROM MainTools");
+    QSqlQuery  del_query_1(QSqlDatabase::database("conn_start"));
+    del_query_1.exec("DELETE FROM Engineers");
+
+    // Engineers
+    for(int r = 0; r < ui->engineers_tableWidget->rowCount(); r++){
+        QTableWidgetItem *item = ui->engineers_tableWidget->item(r,0);
+        if(!item || item->text().isEmpty()){
+            break;
+        }
+       QSqlQuery q_engineers(QSqlDatabase::database("conn_start"));
+       q_engineers.prepare("INSERT INTO Engineers VALUES(?)");
+       QString engineer_name = ui->engineers_tableWidget->item(r,0)->text();
+       engineers_names << engineer_name; // Store for mainWindow
+       q_engineers.bindValue(0,engineer_name);
+       q_engineers.exec();
+    }
+
+    // Tools
+    for(int r = 0; r < ui->tools_tableWidget->rowCount();r++){
+        QTableWidgetItem *item = ui->tools_tableWidget->item(r,0);
+        if(!item || item->text().isEmpty()){
+            break;
+        }
+        QSqlQuery q_tools(QSqlDatabase::database("conn_start"));
+        q_tools.prepare("INSERT INTO MainTools VALUES(?,?)");
+        QString tool_name = ui->tools_tableWidget->item(r,0)->text();
+        QString tool_no = ui->tools_tableWidget->item(r,1)->text();
+        if(tool_no.toInt()){
+            int tool_noInt  = tool_no.toInt();
+             if(tools_audit.contains(tool_name)){
+                 int val = tools_audit.value(tool_name);
+                 tool_noInt += val;
+             }
+             tools_audit[tool_name] = tool_noInt;
+        }else{
+            QMessageBox::warning(nullptr,QObject::tr("Warning"),
+                                 QObject::tr("\n Some of your tool numbers are not actually numbers \n"
+                                             "I am gonna continue but some functionality is gonna be deducted"), QMessageBox::Cancel);
+        }
+        tool_names << tool_name; // store for mainWindow;
+        q_tools.bindValue(0,tool_name);
+        q_tools.bindValue(1, tool_no);
+        q_tools.exec();
+    }
+    // Users Line Edit
+    str_user = ui->user_lineEdit->text();
+    if(str_user.isEmpty()){
+        QMessageBox::warning(nullptr, QObject::tr("Warning"), QObject::tr("User Line edit is empty\n"
+                                                                          "Your changes are obsolete"), QMessageBox::Cancel);
+        qApp->quit();
+    }
+    up_db.close();
+    /*Switch page to 1 */
+    ui->stackedWidget->setCurrentIndex(1);
+    constructMain();
+}
+void MainWindow::quitMain(){
+    qApp->quit();
+}
+/***************************************************************************************************************************/
+void MainWindow::constructMain(){
+    /*Create a database connection*/
+    // 1 -> create connection(check for drivers)
+    if(!createConnection()){
+        qApp->quit();
+    }
+    // 3-> Pull up Db and update the table
+    pullUpDb(select_all, select_all_partner);
 }
 void MainWindow::onCellClicked(int _row, int _col){
     QTableWidgetItem *item = ui->main_tableWidget->item(_row,_col);
@@ -93,9 +281,9 @@ void MainWindow::onCellClicked(int _row, int _col){
                 tools_autoComplete(QString(""), _row);
                 engineers_autoComplete(QString(""),_row);
             }else if (_col == 8) {
-                ui->main_tableWidget->setItem(_row,_col, new QTableWidgetItem(current_user));
+                ui->main_tableWidget->setItem(_row,_col, new QTableWidgetItem(str_user));
             }else if(_col == 9){
-                ui->main_tableWidget->setItem(_row,_col, new QTableWidgetItem(current_user));
+                ui->main_tableWidget->setItem(_row,_col, new QTableWidgetItem(str_user));
             }
         }
     }
@@ -183,7 +371,7 @@ void MainWindow::createComboWidget(QString status_string, int r){
 void MainWindow::tools_autoComplete(QString t_item,int r)
 {
     QLineEdit *tools_edit = new QLineEdit();
-    QCompleter *tool_completer = new QCompleter(tools);
+    QCompleter *tool_completer = new QCompleter(tool_names);
     tool_completer->setCaseSensitivity(Qt::CaseInsensitive);
     tool_completer->setFilterMode(Qt::MatchContains);
     tools_edit->setCompleter(tool_completer);
@@ -194,7 +382,7 @@ void MainWindow::tools_autoComplete(QString t_item,int r)
 void MainWindow::engineers_autoComplete(QString t_item,int r)
 {
     QLineEdit *engineer_edit = new QLineEdit();
-    QCompleter *engineer_completer = new QCompleter(engineers);
+    QCompleter *engineer_completer = new QCompleter(engineers_names);
     engineer_completer->setCaseSensitivity(Qt::CaseInsensitive);
     engineer_completer->setFilterMode(Qt::MatchContains);
     engineer_edit->setCompleter(engineer_completer);
@@ -449,13 +637,13 @@ void MainWindow::onAuditClicked()
         hash_iterator.next();
         QString pending_item = hash_iterator.key();
         int pending_value = hash_iterator.value();
-        if(original_tools_audit.contains(pending_item)){
-             int org_val =  original_tools_audit.value(pending_item);
-             original_tools_audit[pending_item] =(org_val - pending_value);
+        if(tools_audit.contains(pending_item)){
+             int org_val =  tools_audit.value(pending_item);
+             tools_audit[pending_item] =(org_val - pending_value);
         }
     }
     // as of now the org tools have the updated list
-    QHashIterator<QString, int>h_iter(original_tools_audit);
+    QHashIterator<QString, int>h_iter(tools_audit);
     int _r = 0;
     while(h_iter.hasNext()){
         h_iter.next();

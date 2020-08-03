@@ -19,6 +19,7 @@
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpacerItem>
+#include <QtWidgets/QStackedWidget>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QTableWidget>
 #include <QtWidgets/QVBoxLayout>
@@ -30,11 +31,43 @@ class Ui_MainWindow
 {
 public:
     QWidget *centralwidget;
+    QVBoxLayout *verticalLayout_8;
+    QStackedWidget *stackedWidget;
+    QWidget *page;
+    QVBoxLayout *verticalLayout_5;
     QVBoxLayout *verticalLayout_2;
-    QVBoxLayout *verticalLayout;
-    QHBoxLayout *horizontalLayout;
-    QSpacerItem *horizontalSpacer;
-    QLabel *search_label;
+    QHBoxLayout *horizontalLayout_3;
+    QSpacerItem *horizontalSpacer_3;
+    QLabel *label;
+    QSpacerItem *horizontalSpacer_4;
+    QHBoxLayout *horizontalLayout_4;
+    QVBoxLayout *verticalLayout_3;
+    QHBoxLayout *horizontalLayout_5;
+    QSpacerItem *horizontalSpacer_5;
+    QLabel *label_2;
+    QSpacerItem *horizontalSpacer_6;
+    QLineEdit *user_lineEdit;
+    QHBoxLayout *horizontalLayout_6;
+    QSpacerItem *horizontalSpacer_7;
+    QLabel *label_3;
+    QSpacerItem *horizontalSpacer_8;
+    QTableWidget *engineers_tableWidget;
+    QVBoxLayout *verticalLayout_4;
+    QHBoxLayout *horizontalLayout_7;
+    QSpacerItem *horizontalSpacer_9;
+    QLabel *label_4;
+    QSpacerItem *horizontalSpacer_10;
+    QTableWidget *tools_tableWidget;
+    QHBoxLayout *horizontalLayout_10;
+    QSpacerItem *horizontalSpacer_13;
+    QPushButton *ok_pushButton;
+    QPushButton *cancel_pushButton;
+    QWidget *page_2;
+    QVBoxLayout *verticalLayout_7;
+    QVBoxLayout *verticalLayout_6;
+    QHBoxLayout *horizontalLayout_8;
+    QSpacerItem *horizontalSpacer_11;
+    QLabel *search_label_2;
     QLineEdit *Name_lineEdit;
     QLineEdit *search_lineEdit;
     QTableWidget *main_tableWidget;
@@ -61,47 +94,188 @@ public:
         centralwidget->setStyleSheet(QString::fromUtf8("centralwidget{\n"
 "	background-color: rgb(115, 210, 22);\n"
 "}"));
-        verticalLayout_2 = new QVBoxLayout(centralwidget);
+        verticalLayout_8 = new QVBoxLayout(centralwidget);
+        verticalLayout_8->setObjectName(QString::fromUtf8("verticalLayout_8"));
+        stackedWidget = new QStackedWidget(centralwidget);
+        stackedWidget->setObjectName(QString::fromUtf8("stackedWidget"));
+        page = new QWidget();
+        page->setObjectName(QString::fromUtf8("page"));
+        verticalLayout_5 = new QVBoxLayout(page);
+        verticalLayout_5->setObjectName(QString::fromUtf8("verticalLayout_5"));
+        verticalLayout_2 = new QVBoxLayout();
         verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
-        verticalLayout = new QVBoxLayout();
-        verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
-        verticalLayout->setContentsMargins(-1, -1, -1, 0);
-        horizontalLayout = new QHBoxLayout();
-        horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
-        horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+        verticalLayout_2->setContentsMargins(-1, -1, -1, 0);
+        horizontalLayout_3 = new QHBoxLayout();
+        horizontalLayout_3->setObjectName(QString::fromUtf8("horizontalLayout_3"));
+        horizontalLayout_3->setSizeConstraint(QLayout::SetDefaultConstraint);
+        horizontalSpacer_3 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
-        horizontalLayout->addItem(horizontalSpacer);
+        horizontalLayout_3->addItem(horizontalSpacer_3);
 
-        search_label = new QLabel(centralwidget);
-        search_label->setObjectName(QString::fromUtf8("search_label"));
+        label = new QLabel(page);
+        label->setObjectName(QString::fromUtf8("label"));
 
-        horizontalLayout->addWidget(search_label);
+        horizontalLayout_3->addWidget(label);
 
-        Name_lineEdit = new QLineEdit(centralwidget);
+        horizontalSpacer_4 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_3->addItem(horizontalSpacer_4);
+
+
+        verticalLayout_2->addLayout(horizontalLayout_3);
+
+        horizontalLayout_4 = new QHBoxLayout();
+        horizontalLayout_4->setObjectName(QString::fromUtf8("horizontalLayout_4"));
+        horizontalLayout_4->setContentsMargins(-1, -1, 0, -1);
+        verticalLayout_3 = new QVBoxLayout();
+        verticalLayout_3->setObjectName(QString::fromUtf8("verticalLayout_3"));
+        verticalLayout_3->setContentsMargins(-1, -1, -1, 22);
+        horizontalLayout_5 = new QHBoxLayout();
+        horizontalLayout_5->setObjectName(QString::fromUtf8("horizontalLayout_5"));
+        horizontalSpacer_5 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_5->addItem(horizontalSpacer_5);
+
+        label_2 = new QLabel(page);
+        label_2->setObjectName(QString::fromUtf8("label_2"));
+
+        horizontalLayout_5->addWidget(label_2);
+
+        horizontalSpacer_6 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_5->addItem(horizontalSpacer_6);
+
+
+        verticalLayout_3->addLayout(horizontalLayout_5);
+
+        user_lineEdit = new QLineEdit(page);
+        user_lineEdit->setObjectName(QString::fromUtf8("user_lineEdit"));
+
+        verticalLayout_3->addWidget(user_lineEdit);
+
+        horizontalLayout_6 = new QHBoxLayout();
+        horizontalLayout_6->setObjectName(QString::fromUtf8("horizontalLayout_6"));
+        horizontalSpacer_7 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_6->addItem(horizontalSpacer_7);
+
+        label_3 = new QLabel(page);
+        label_3->setObjectName(QString::fromUtf8("label_3"));
+
+        horizontalLayout_6->addWidget(label_3);
+
+        horizontalSpacer_8 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_6->addItem(horizontalSpacer_8);
+
+
+        verticalLayout_3->addLayout(horizontalLayout_6);
+
+        engineers_tableWidget = new QTableWidget(page);
+        engineers_tableWidget->setObjectName(QString::fromUtf8("engineers_tableWidget"));
+
+        verticalLayout_3->addWidget(engineers_tableWidget);
+
+
+        horizontalLayout_4->addLayout(verticalLayout_3);
+
+        verticalLayout_4 = new QVBoxLayout();
+        verticalLayout_4->setObjectName(QString::fromUtf8("verticalLayout_4"));
+        verticalLayout_4->setContentsMargins(-1, -1, 0, 0);
+        horizontalLayout_7 = new QHBoxLayout();
+        horizontalLayout_7->setObjectName(QString::fromUtf8("horizontalLayout_7"));
+        horizontalLayout_7->setContentsMargins(-1, -1, 45, -1);
+        horizontalSpacer_9 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_7->addItem(horizontalSpacer_9);
+
+        label_4 = new QLabel(page);
+        label_4->setObjectName(QString::fromUtf8("label_4"));
+
+        horizontalLayout_7->addWidget(label_4);
+
+        horizontalSpacer_10 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_7->addItem(horizontalSpacer_10);
+
+
+        verticalLayout_4->addLayout(horizontalLayout_7);
+
+        tools_tableWidget = new QTableWidget(page);
+        tools_tableWidget->setObjectName(QString::fromUtf8("tools_tableWidget"));
+
+        verticalLayout_4->addWidget(tools_tableWidget);
+
+
+        horizontalLayout_4->addLayout(verticalLayout_4);
+
+
+        verticalLayout_2->addLayout(horizontalLayout_4);
+
+        horizontalLayout_10 = new QHBoxLayout();
+        horizontalLayout_10->setObjectName(QString::fromUtf8("horizontalLayout_10"));
+        horizontalLayout_10->setContentsMargins(-1, -1, -1, 0);
+        horizontalSpacer_13 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_10->addItem(horizontalSpacer_13);
+
+        ok_pushButton = new QPushButton(page);
+        ok_pushButton->setObjectName(QString::fromUtf8("ok_pushButton"));
+
+        horizontalLayout_10->addWidget(ok_pushButton);
+
+        cancel_pushButton = new QPushButton(page);
+        cancel_pushButton->setObjectName(QString::fromUtf8("cancel_pushButton"));
+
+        horizontalLayout_10->addWidget(cancel_pushButton);
+
+
+        verticalLayout_2->addLayout(horizontalLayout_10);
+
+
+        verticalLayout_5->addLayout(verticalLayout_2);
+
+        stackedWidget->addWidget(page);
+        page_2 = new QWidget();
+        page_2->setObjectName(QString::fromUtf8("page_2"));
+        verticalLayout_7 = new QVBoxLayout(page_2);
+        verticalLayout_7->setObjectName(QString::fromUtf8("verticalLayout_7"));
+        verticalLayout_6 = new QVBoxLayout();
+        verticalLayout_6->setObjectName(QString::fromUtf8("verticalLayout_6"));
+        verticalLayout_6->setContentsMargins(-1, -1, -1, 0);
+        horizontalLayout_8 = new QHBoxLayout();
+        horizontalLayout_8->setObjectName(QString::fromUtf8("horizontalLayout_8"));
+        horizontalSpacer_11 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_8->addItem(horizontalSpacer_11);
+
+        search_label_2 = new QLabel(page_2);
+        search_label_2->setObjectName(QString::fromUtf8("search_label_2"));
+
+        horizontalLayout_8->addWidget(search_label_2);
+
+        Name_lineEdit = new QLineEdit(page_2);
         Name_lineEdit->setObjectName(QString::fromUtf8("Name_lineEdit"));
 
-        horizontalLayout->addWidget(Name_lineEdit);
+        horizontalLayout_8->addWidget(Name_lineEdit);
 
-        search_lineEdit = new QLineEdit(centralwidget);
+        search_lineEdit = new QLineEdit(page_2);
         search_lineEdit->setObjectName(QString::fromUtf8("search_lineEdit"));
 
-        horizontalLayout->addWidget(search_lineEdit);
+        horizontalLayout_8->addWidget(search_lineEdit);
 
 
-        verticalLayout->addLayout(horizontalLayout);
+        verticalLayout_6->addLayout(horizontalLayout_8);
 
-        main_tableWidget = new QTableWidget(centralwidget);
+        main_tableWidget = new QTableWidget(page_2);
         main_tableWidget->setObjectName(QString::fromUtf8("main_tableWidget"));
 
-        verticalLayout->addWidget(main_tableWidget);
-
-
-        verticalLayout_2->addLayout(verticalLayout);
+        verticalLayout_6->addWidget(main_tableWidget);
 
         horizontalLayout_2 = new QHBoxLayout();
         horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
         horizontalLayout_2->setContentsMargins(-1, -1, -1, 0);
-        save_label = new QLabel(centralwidget);
+        save_label = new QLabel(page_2);
         save_label->setObjectName(QString::fromUtf8("save_label"));
 
         horizontalLayout_2->addWidget(save_label);
@@ -110,7 +284,7 @@ public:
 
         horizontalLayout_2->addItem(horizontalSpacer_2);
 
-        audit_pushButton = new QPushButton(centralwidget);
+        audit_pushButton = new QPushButton(page_2);
         audit_pushButton->setObjectName(QString::fromUtf8("audit_pushButton"));
         audit_pushButton->setStyleSheet(QString::fromUtf8("QPushButton{\n"
 "	background-color:rgb(191, 64, 172);\n"
@@ -118,7 +292,7 @@ public:
 
         horizontalLayout_2->addWidget(audit_pushButton);
 
-        print_pushButton = new QPushButton(centralwidget);
+        print_pushButton = new QPushButton(page_2);
         print_pushButton->setObjectName(QString::fromUtf8("print_pushButton"));
         print_pushButton->setStyleSheet(QString::fromUtf8("QPushButton{\n"
 "	background-color:rgb(193, 125, 17)\n"
@@ -126,7 +300,7 @@ public:
 
         horizontalLayout_2->addWidget(print_pushButton);
 
-        pending_pushButton = new QPushButton(centralwidget);
+        pending_pushButton = new QPushButton(page_2);
         pending_pushButton->setObjectName(QString::fromUtf8("pending_pushButton"));
         QFont font;
         font.setBold(false);
@@ -139,7 +313,7 @@ public:
 
         horizontalLayout_2->addWidget(pending_pushButton);
 
-        save_pushButton = new QPushButton(centralwidget);
+        save_pushButton = new QPushButton(page_2);
         save_pushButton->setObjectName(QString::fromUtf8("save_pushButton"));
         QFont font1;
         font1.setBold(true);
@@ -153,7 +327,14 @@ public:
         horizontalLayout_2->addWidget(save_pushButton);
 
 
-        verticalLayout_2->addLayout(horizontalLayout_2);
+        verticalLayout_6->addLayout(horizontalLayout_2);
+
+
+        verticalLayout_7->addLayout(verticalLayout_6);
+
+        stackedWidget->addWidget(page_2);
+
+        verticalLayout_8->addWidget(stackedWidget);
 
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
@@ -166,13 +347,22 @@ public:
 
         retranslateUi(MainWindow);
 
+        stackedWidget->setCurrentIndex(0);
+
+
         QMetaObject::connectSlotsByName(MainWindow);
     } // setupUi
 
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "Boito Tools Inventory", nullptr));
-        search_label->setText(QCoreApplication::translate("MainWindow", "Search", nullptr));
+        label->setText(QCoreApplication::translate("MainWindow", "Boito Tools Inventory", nullptr));
+        label_2->setText(QCoreApplication::translate("MainWindow", "Username", nullptr));
+        label_3->setText(QCoreApplication::translate("MainWindow", "Engineers", nullptr));
+        label_4->setText(QCoreApplication::translate("MainWindow", "Tools", nullptr));
+        ok_pushButton->setText(QCoreApplication::translate("MainWindow", "Ok", nullptr));
+        cancel_pushButton->setText(QCoreApplication::translate("MainWindow", "Cancel", nullptr));
+        search_label_2->setText(QCoreApplication::translate("MainWindow", "Search", nullptr));
 #if QT_CONFIG(tooltip)
         Name_lineEdit->setToolTip(QString());
 #endif // QT_CONFIG(tooltip)

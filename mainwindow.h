@@ -11,6 +11,7 @@
 
 #include <QComboBox>
 #include <QDate>
+#include <QCompleter>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QTableWidget>
@@ -41,6 +42,16 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    /*start-up stuff*/
+    QStringList user_names;
+    QSqlDatabase up_db;
+    QString str_user;
+    QStringList tool_names;
+    QStringList engineers_names;
+    QHash<QString, int> tools_audit;
+
+    bool createMainConnection();
+    void pullUpStartDB();
     /*container*/
     QHash<QString, int> pending_tools_audit;
     /*Print counter*/
@@ -59,15 +70,12 @@ private:
     /*main-application*/
     void closeEvent (QCloseEvent *event);
     void updateLabel(QString _type, QString _ref);
-    /*From start up*/
-    QString current_user;
-    QStringList  engineers;
-    QStringList tools;
-    QHash<QString, int>  original_tools_audit;
     /*Let's create widgets*/
     void createComboWidget(QString status_string, int r);
     void tools_autoComplete(QString t_item,int r);
     void engineers_autoComplete(QString t_item,int r);
+    /*MainWindow construct*/
+    void constructMain();
 private slots:
     void mainHandler();
     void onCellClicked(int _row, int _col);
@@ -77,5 +85,9 @@ private slots:
     void onPendingClicked();
     void onPrintClicked();
     void onAuditClicked();
+    void onEngineersCellClicked(int,int);
+    void onToolsCellClicked(int,int);
+    void saveData();
+    void quitMain();
 };
 #endif // MAINWINDOW_H

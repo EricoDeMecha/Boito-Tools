@@ -17,15 +17,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp \
-    startup.cpp
+    mainwindow.cpp
 
 HEADERS += \
-    mainwindow.h \
-    startup.h
+    mainwindow.h
 
 FORMS += \
-    browse.ui \
     mainwindow.ui
 
 win32:RC_ICONS += app_icon.ico
