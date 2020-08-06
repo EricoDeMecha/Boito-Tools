@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-
+#include "login.h"
 #include <QFileDialog>
 #include <QHeaderView>
 
@@ -13,12 +13,13 @@ MainWindow::MainWindow(QWidget *parent)
     /*Check for sqlite drivers and database files */
     checkForDrivers();
     checkForDatabases();
-    /*show first page*/
+    /*###########             Page 0              #########*/
+
     ui->stackedWidget->setCurrentIndex(0);
     /*Do the stuff related to the first page*/
-    ui->stackedWidget->setWindowTitle("Start-Up Window");
+
     /*Connect to the Up_db*/
-    if(!createMainConnection()){
+    if(!createEntriesConnection()){
         qApp->quit();
     }
     /*Customize the engineers table*/
@@ -37,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
     tools_verticalHeader->setSectionResizeMode(QHeaderView::Fixed);
     tools_verticalHeader->setDefaultSectionSize(38);
 
-    QStringList tools_tableItems = {"Item","Number"};
+    QStringList tools_tableItems = {"Item","Number","Type"};
     ui->tools_tableWidget->setColumnCount(tools_tableItems.size());
     int i = 0;
     foreach (QString item, tools_tableItems) {
@@ -46,18 +47,29 @@ MainWindow::MainWindow(QWidget *parent)
     }
     ui->tools_tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     /*Pull the startup db*/
-    pullUpStartDB();
-    /*Add the autocompletion to user's lineEdi*/
-    QCompleter *user_completer = new QCompleter(user_names);
-    user_completer->setCaseSensitivity(Qt::CaseInsensitive);
-    user_completer->setFilterMode(Qt::MatchContains);
-    ui->user_lineEdit->setCompleter(user_completer);
+    pullUpEntriesDB();
     /*connect*/
     connect(ui->engineers_tableWidget, SIGNAL(cellClicked(int, int)), this, SLOT(onEngineersCellClicked(int,int)));
     connect(ui->tools_tableWidget,SIGNAL(cellClicked(int, int)), this,SLOT(onToolsCellClicked(int,int)));
-    connect(ui->ok_pushButton, SIGNAL(clicked()),this,SLOT(saveData()));
-    connect(ui->cancel_pushButton,SIGNAL(clicked()), this,SLOT(quitMain()));
-    /*************************************************************************************************************************/
+    connect(ui->savep0_pushButton, SIGNAL(clicked()),this,SLOT(saveEntries()));
+    connect(ui->consumablep0_pushButton, &QPushButton::clicked, this, [this](){
+        ui->stackedWidget->setCurrentIndex(2);
+        if(!connectConsumablesDb()){
+            qApp->quit();
+        }
+        QString command = "SELECT * FROM consumables";
+        pullUpConsumables(command, QStringList{});
+    });
+    connect(ui->nonconp0_pushButton, &QPushButton::clicked, this, [this](){
+        ui->stackedWidget->setCurrentIndex(1);
+        if(!createToolsConnection()){
+            qApp->quit();
+        }
+        pullUpToolsDb(select_all, select_all_partner);
+    });
+    /*###########             Page 1              #########*/
+
+
     /*Customize the Table Widget*/
     // 1- >set a fixed row width
     QHeaderView *verticalHeader = ui->main_tableWidget->verticalHeader();
@@ -85,13 +97,17 @@ MainWindow::MainWindow(QWidget *parent)
         ui->search_lineEdit->setCompleter(tool_comp);
 
     // 4-> Insert Widget to status if cell is clicked and is empty
-    connect(ui->main_tableWidget, SIGNAL(cellClicked(int, int)), this, SLOT(onCellClicked(int,int)));
+    connect(ui->main_tableWidget, SIGNAL(cellClicked(int, int)), this, SLOT(onToolCellClicked(int,int)));
 
     // save is manual
-    connect(ui->save_pushButton,SIGNAL(clicked()),this, SLOT(mainHandler()));
+    connect(ui->save_pushButton,&QPushButton::clicked,this, [this](){
+        deleteToolsTable();
+        saveToolsTable();
+        pullUpToolsDb(select_all,select_all_partner);
+    });
     // search with names
     connect(ui->Name_lineEdit, SIGNAL(editingFinished()),this,SLOT(nameSearch()));
-    connect(ui->Name_lineEdit,SIGNAL(returnPressed()),this,SLOT(restoreDisplay()));
+    connect(ui->restore1_pushButton,SIGNAL(clicked()),this,SLOT(restoreDisplay()));
     // Search with tools
     connect(ui->search_lineEdit,SIGNAL(editingFinished()),this,SLOT(toolSearch()));
     // pending button
@@ -100,12 +116,123 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->print_pushButton, SIGNAL(clicked()), this, SLOT(onPrintClicked()));
     // audit tools
     connect(ui->audit_pushButton, SIGNAL(clicked()), this, SLOT(onAuditClicked()));
+    // Home1 button
+    connect(ui->home1_pushButton, &QPushButton::clicked, this, [this](){
+        ui->stackedWidget->setCurrentIndex(0);
+    });
+    // Consumables button
+    connect(ui->consumable_pushButton, &QPushButton::clicked, this, [this](){
+        ui->stackedWidget->setCurrentIndex(2);
+        if(!connectConsumablesDb()){
+            qApp->quit();
+        }
+        QString command = "SELECT * FROM consumables";
+        pullUpConsumables(command, QStringList{});
+    });
+
+    /*###########             Page 2              #########*/
+
+    // home2 button
+    connect(ui->home2_pushButton, &QPushButton::clicked, this, [this](){
+        ui->stackedWidget->setCurrentIndex(0);
+    });
+    // consumable table widget
+    QStringList consumable_headers = {"Date","Item","No/Quantity","Section","Issued to","Sign","Issued by"};
+    ui->consumable_tableWidget->setColumnCount(consumable_headers.size());
+    ui->consumable_tableWidget->setHorizontalHeaderLabels(consumable_headers);
+    ui->consumable_tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    // save  button
+    connect(ui->save2_pushButton, SIGNAL(clicked()),this,SLOT(consumablesHandler()));
+    // search
+    QStringList fields = {"Date", "Item","Section","Receiver","Issued_by"};
+    ui->field_comboBox->addItems(fields);
+    connect(ui->item_lineEdit, SIGNAL(editingFinished()), this, SLOT(itemSearch()));
+    connect(ui->restore2_pushButton, SIGNAL(clicked()), this,SLOT(restoreConsDisp()));
+    // non consumables
+    connect(ui->noncon_pushButton, &QPushButton::clicked, this, [this](){
+        ui->stackedWidget->setCurrentIndex(1);
+    });
+    // consumable cell click signal
+    connect(ui->consumable_tableWidget, SIGNAL(cellClicked(int, int)), this, SLOT(onConsumableCellClicked(int , int)));
+
+    /*#######################        Pop-up Window for LOGIN           ############################*/
+    QTimer::singleShot(0,qApp,[this](){
+        login lg;
+        lg.setWindowTitle("Login");
+        lg.setModal(true);
+        lg.exec();
+        str_user = lg.shared_user;
+    });
+
 }
-bool MainWindow::createMainConnection()
+/*******************            MAIN                         ************************/
+void MainWindow::checkForDrivers()
 {
     const QString DRIVER("QSQLITE");
-    up_db = QSqlDatabase::addDatabase(DRIVER,"conn_start");
-    up_db.setDatabaseName("up_db");
+    if(!QSqlDatabase::isDriverAvailable(DRIVER)){
+        QMessageBox::critical(nullptr, QObject::tr("Critical Error"),
+                  QObject::tr("Unable to establish a database connection.\n"
+                              "This project needs SQLite support. Please read "
+                              "the Qt SQL driver documentation for information how "
+                              "to build it.\n\n"
+                              "Click Cancel to exit."), QMessageBox::Cancel);
+    }
+}
+void MainWindow::checkForDatabases()
+{
+    if(!QFile::exists(tools_db)){
+        // create tools_db
+        //tools_db
+        QSqlDatabase tools = QSqlDatabase::addDatabase(DRIVER, conn_tools);
+        tools.setDatabaseName(tools_db);
+        tools.open();
+        QSqlQuery q_tools(QSqlDatabase::database(conn_tools));
+        q_tools.exec("CREATE TABLE Tools(Date TEXT, Item TEXT,No TEXT, Section TEXT,"
+                     " Name TEXT, Sign TEXT, Status TEXT, Condition TEXT,Issued_by TEXT, Received_by TEXT)");
+        tools.close();
+    }
+    if(!QFile::exists(entries_db)){
+        // entries_db
+        QSqlDatabase data_container = QSqlDatabase::addDatabase(DRIVER, conn_entries);
+        data_container.setDatabaseName(entries_db);
+        data_container.open();
+
+        QStringList  entries_tables_commands = {"CREATE TABLE Engineers (Names TEXT)",
+                                               "CREATE TABLE Tools (Item TEXT, Num TEXT, Type TEXT)"};
+        for(int i = 0; i < entries_tables_commands.size(); i++){
+         QSqlQuery q_entries(QSqlDatabase::database(conn_entries));
+         q_entries.exec(entries_tables_commands[i]);
+        }
+        data_container.close();
+    }
+    if(!QFile::exists(consumables_db)){
+        //consumables_db
+        QSqlDatabase db_consumables = QSqlDatabase::addDatabase(DRIVER, conn_consumables);
+        db_consumables.setDatabaseName(consumables_db);
+        db_consumables.open();
+        QSqlQuery q_consum(QSqlDatabase::database(conn_consumables));
+        q_consum.exec("CREATE TABLE consumables(Date TEXT, Item TEXT,No TEXT, Section TEXT,"
+                     " Issued_to TEXT, Sign TEXT,Issued_by TEXT)");
+        db_consumables.close();
+     }
+    if(!QFile::exists(login_db)){
+        // login db
+        const QString conn1_login = "conn_login";
+        QSqlDatabase db_login = QSqlDatabase::addDatabase(DRIVER, conn1_login);
+        db_login.setDatabaseName(login_db);
+        db_login.open();
+
+        QSqlQuery q_login(QSqlDatabase::database(conn1_login));
+        q_login.exec("CREATE TABLE users(username TEXT, password TEXT)");
+        db_login.close();
+    }
+}
+/****************                              PAGE 0                            ******************/
+bool MainWindow::createEntriesConnection()
+{
+    const QString DRIVER("QSQLITE");
+    up_db = QSqlDatabase::addDatabase(DRIVER,conn_entries);
+    up_db.setDatabaseName(entries_db);
     if(!up_db.open()){
         QMessageBox::critical(nullptr, QObject::tr("Critical Error"),
                   QObject::tr("Could not find db file \n\n"
@@ -114,62 +241,60 @@ bool MainWindow::createMainConnection()
     }
     return true;
 }
-void MainWindow::pullUpStartDB()
+void MainWindow::pullUpEntriesDB()
 {
     ui->engineers_tableWidget->clearContents();
     ui->engineers_tableWidget->setRowCount(0);
 
-    QSqlQuery engineers_count_query(QSqlDatabase::database("conn_start"));
-    // count the number of rows in the db
-    engineers_count_query.prepare("SELECT COUNT(1) FROM Engineers");
-    int engineers_row_count = 0;
-    if(engineers_count_query.exec() && engineers_count_query.seek(0)){
-         engineers_row_count= engineers_count_query.value(0).toString().toInt();
-    }
-    ui->engineers_tableWidget->setRowCount((engineers_row_count + 1));// 4 Additional empty rows
-    QSqlQuery engineers_query(QSqlDatabase::database("conn_start"));
+    QSqlQuery engineers_query(QSqlDatabase::database(conn_entries));
     engineers_query.prepare("SELECT * FROM Engineers");
     if(engineers_query.exec()){
-        int r = 0, c = 0;
+        int r = 0;
         while(engineers_query.next()){
-            ui->engineers_tableWidget->setItem(r,c, new QTableWidgetItem(engineers_query.value(0).toString()));
+            ui->engineers_tableWidget->insertRow(r);
+            ui->engineers_tableWidget->setItem(r,0, new QTableWidgetItem(engineers_query.value(0).toString()));
             r++;
         }
+        // add 1 more row
+        ui->engineers_tableWidget->insertRow(ui->engineers_tableWidget->rowCount());
     }
     /*Tools*/
     ui->tools_tableWidget->clearContents();
     ui->tools_tableWidget->setRowCount(0);
 
-    QSqlQuery tools_count_query(QSqlDatabase::database("conn_start"));
-    // count the number of rows in the db
-    tools_count_query.prepare("SELECT COUNT(1) FROM MainTools");
-    int tools_row_count = 0;
-    if(tools_count_query.exec() && tools_count_query.seek(0)){
-         tools_row_count= tools_count_query.value(0).toString().toInt();
-    }
-    ui->tools_tableWidget->setRowCount((tools_row_count + 2));// 4 Additional empty rows
-
-    QSqlQuery tool_query(QSqlDatabase::database("conn_start"));
-    tool_query.prepare("SELECT * FROM MainTools");
+    QSqlQuery tool_query(QSqlDatabase::database(conn_entries));
+    tool_query.prepare("SELECT * FROM Tools");
     if(tool_query.exec()){
         int item_no = tool_query.record().indexOf("Items");
-        int no_no = tool_query.record().indexOf("Num");
-        int _r = 0 , _c0 = 0, _c1 = 1;
+        int num_no = tool_query.record().indexOf("Num");
+        int type_no = tool_query.record().indexOf("Type");
+        int _r = 0;
         while(tool_query.next()){
-            ui->tools_tableWidget->setItem(_r,_c0,new QTableWidgetItem(tool_query.value(item_no).toString()));
-            ui->tools_tableWidget->setItem(_r,_c1,new QTableWidgetItem(tool_query.value(no_no).toString()));
+            ui->tools_tableWidget->insertRow(_r);
+            ui->tools_tableWidget->setItem(_r,0,new QTableWidgetItem(tool_query.value(item_no).toString()));
+            ui->tools_tableWidget->setItem(_r,1,new QTableWidgetItem(tool_query.value(num_no).toString()));
+            if(tool_query.value(type_no).toString() == "Non-Consumable"){
+                createTypeCombo(_r, 1);
+            }else{
+                createTypeCombo(_r,0);
+            }
             _r++;
         }
-    }
-    /*Users*/
-    QSqlQuery q_users(QSqlDatabase::database("conn_start"));
-    q_users.prepare("SELECT Names FROM Users");
-    if(q_users.exec()){
-        while(q_users.next()){
-            user_names << q_users.value(0).toString();
-        }
+        // add 1 more row
+        ui->tools_tableWidget->insertRow(ui->tools_tableWidget->rowCount());
+        createTypeCombo(_r, 1);
     }
 }
+void MainWindow::createTypeCombo(int r, int _type){
+    QStringList _types = {"Consumable", "Non-Consumable"};
+    if(_type == 1){
+        _types.swapItemsAt(0,1);
+    }
+    QComboBox *combo_Types =  new QComboBox();
+    combo_Types->addItems(_types);
+    ui->tools_tableWidget->setCellWidget(r,2,combo_Types);
+}
+
 void MainWindow::onEngineersCellClicked(int r, int c)
 {
     QTableWidgetItem *engineers_item = ui->engineers_tableWidget->item(r,c);
@@ -186,15 +311,16 @@ void MainWindow::onToolsCellClicked(int r, int c)
         if(!tools_item ||  tools_item->text().isEmpty()){
             int current_rowCount = ui->tools_tableWidget->rowCount();
             ui->tools_tableWidget->insertRow(current_rowCount);// row
+            createTypeCombo(current_rowCount,1);
         }
     }
 }
 
-void MainWindow::saveData()
+void MainWindow::saveEntries()
 {
-    QSqlQuery  del_query(QSqlDatabase::database("conn_start"));
-    del_query.exec("DELETE FROM MainTools");
-    QSqlQuery  del_query_1(QSqlDatabase::database("conn_start"));
+    QSqlQuery  del_query(QSqlDatabase::database(conn_entries));
+    del_query.exec("DELETE FROM Tools");
+    QSqlQuery  del_query_1(QSqlDatabase::database(conn_entries));
     del_query_1.exec("DELETE FROM Engineers");
 
     // Engineers
@@ -203,24 +329,25 @@ void MainWindow::saveData()
         if(!item || item->text().isEmpty()){
             break;
         }
-       QSqlQuery q_engineers(QSqlDatabase::database("conn_start"));
+       QSqlQuery q_engineers(QSqlDatabase::database(conn_entries));
        q_engineers.prepare("INSERT INTO Engineers VALUES(?)");
        QString engineer_name = ui->engineers_tableWidget->item(r,0)->text();
        engineers_names << engineer_name; // Store for mainWindow
        q_engineers.bindValue(0,engineer_name);
        q_engineers.exec();
     }
-
     // Tools
     for(int r = 0; r < ui->tools_tableWidget->rowCount();r++){
         QTableWidgetItem *item = ui->tools_tableWidget->item(r,0);
         if(!item || item->text().isEmpty()){
             break;
         }
-        QSqlQuery q_tools(QSqlDatabase::database("conn_start"));
-        q_tools.prepare("INSERT INTO MainTools VALUES(?,?)");
+        QSqlQuery q_tools(QSqlDatabase::database(conn_entries));
+        q_tools.prepare("INSERT INTO Tools VALUES(?,?,?)");
         QString tool_name = ui->tools_tableWidget->item(r,0)->text();
         QString tool_no = ui->tools_tableWidget->item(r,1)->text();
+        QLineEdit *item_type = qobject_cast<QLineEdit*>(ui->tools_tableWidget->cellWidget(r,2));
+        QString  str_item_type = item_type->text();
         if(tool_no.toInt()){
             int tool_noInt  = tool_no.toInt();
              if(tools_audit.contains(tool_name)){
@@ -233,66 +360,39 @@ void MainWindow::saveData()
                                  QObject::tr("\n Some of your tool numbers are not actually numbers \n"
                                              "I am gonna continue but some functionality is gonna be deducted"), QMessageBox::Cancel);
         }
-        tool_names << tool_name; // store for mainWindow;
+        if(str_item_type == "Non-Consumable"){
+            tool_names << tool_name; // store for mainWindow;
+        }else{
+            consumable_names << tool_name;
+        }
         q_tools.bindValue(0,tool_name);
         q_tools.bindValue(1, tool_no);
-        q_tools.exec();
-    }
-    // Users Line Edit
-    str_user = ui->user_lineEdit->text();
-    if(str_user.isEmpty()){
-        QMessageBox::warning(nullptr, QObject::tr("Warning"), QObject::tr("User Line edit is empty\n"
-                                                                          "Your changes are obsolete"), QMessageBox::Cancel);
-        qApp->quit();
-    }
-    up_db.close();
-    /*Switch page to 1 */
-    ui->stackedWidget->setCurrentIndex(1);
-    constructMain();
-}
-void MainWindow::quitMain(){
-    qApp->quit();
-}
-/***************************************************************************************************************************/
-void MainWindow::constructMain(){
-    /*Create a database connection*/
-    // 1 -> create connection(check for drivers)
-    if(!createConnection()){
-        qApp->quit();
-    }
-    // 3-> Pull up Db and update the table
-    pullUpDb(select_all, select_all_partner);
-}
-void MainWindow::onCellClicked(int _row, int _col){
-    QTableWidgetItem *item = ui->main_tableWidget->item(_row,_col);
-    if(!item || item->text().isEmpty()){
-        if((_col != 7) || (_col != 0) || (_col != 8) || (_col != 9)){
-            if(_col == 7){
-                createComboWidget("Returned", _row);
-            }else if(_col == 0){
-                // add today's date to column 0 of the new row
-                QString today = QDate::currentDate().toString("d/M/yyyy");
-                ui->main_tableWidget->setItem(_row,_col, new QTableWidgetItem(today));
-                // then add a new row
-                int current_rowCount = ui->main_tableWidget->rowCount();
-                ui->main_tableWidget->insertRow(current_rowCount);
-                // update others
-                createComboWidget("Pending", _row);
-                tools_autoComplete(QString(""), _row);
-                engineers_autoComplete(QString(""),_row);
-            }else if (_col == 8) {
-                ui->main_tableWidget->setItem(_row,_col, new QTableWidgetItem(str_user));
-            }else if(_col == 9){
-                ui->main_tableWidget->setItem(_row,_col, new QTableWidgetItem(str_user));
-            }
+        q_tools.bindValue(2, str_item_type);
+        if(q_tools.exec()){
+            QTime ct = QTime::currentTime();
+            QString _time = ct.toString("hh:mm:ss.zzz");
+            QString _lastSave = "last saved";
+            ui->statusbar->showMessage("Save=Success");
+
+            QString lbl_text = _time + " : " + _lastSave+ "<"+"success"+"> ;(StatusBar)";
+            ui->save_label->setText(lbl_text);
+        }else{
+            QTime ct = QTime::currentTime();
+            QString _time = ct.toString("hh:mm:ss.zzz");
+            QString _lastSave = "last saved";
+            ui->statusbar->showMessage(q_tools.lastError().text());
+
+            QString lbl_text = _time + " : " + _lastSave+ "<"+"Error"+"> ;(StatusBar)";
+            ui->save_label->setText(lbl_text);
         }
     }
 }
-bool MainWindow::createConnection(){
+/*********************************              PAGE 1              ************************************************/
+bool MainWindow::createToolsConnection(){
     const QString DRIVER("QSQLITE");
-    QSqlDatabase db = QSqlDatabase::addDatabase(DRIVER,"conn_main");
-    db.setDatabaseName("db.db");
-    if(!db.open()){
+    QSqlDatabase db_tools = QSqlDatabase::addDatabase(DRIVER,conn_tools);
+    db_tools.setDatabaseName(tools_db);
+    if(!db_tools.open()){
         QMessageBox::critical(nullptr, QObject::tr("Critical Error"),
                               QObject::tr("Unable to open the database \n"
                                           "Make sure the database file is contained in the project root directory"),
@@ -301,13 +401,12 @@ bool MainWindow::createConnection(){
     }
     return true;
 }
-
-void MainWindow::pullUpDb(QString  command , QString bind_value){
+void MainWindow::pullUpToolsDb(QString  command , QString bind_value){
     // clear grounds
     ui->main_tableWidget->clearContents();
     ui->main_tableWidget->setRowCount(0);
     // Bring up all the data to table
-    QSqlQuery pull_query(QSqlDatabase::database("conn_main"));
+    QSqlQuery pull_query(QSqlDatabase::database(conn_tools));
     pull_query.prepare(command);
     if(!bind_value.isEmpty()){
         pull_query.bindValue(0,bind_value);
@@ -367,7 +466,6 @@ void MainWindow::createComboWidget(QString status_string, int r){
     }
     ui->main_tableWidget->setCellWidget(r,6,combo);
 }
-
 void MainWindow::tools_autoComplete(QString t_item,int r)
 {
     QLineEdit *tools_edit = new QLineEdit();
@@ -378,7 +476,6 @@ void MainWindow::tools_autoComplete(QString t_item,int r)
     tools_edit->setText(t_item);
     ui->main_tableWidget->setCellWidget(r,1,tools_edit);
 }
-
 void MainWindow::engineers_autoComplete(QString t_item,int r)
 {
     QLineEdit *engineer_edit = new QLineEdit();
@@ -389,14 +486,36 @@ void MainWindow::engineers_autoComplete(QString t_item,int r)
     engineer_edit->setText(t_item);
     ui->main_tableWidget->setCellWidget(r,4,engineer_edit);
 }
-
-void MainWindow::mainHandler(){
-    deleteDbTable();// delete db table before saving new
-    saveTable();// saves the table
-    pullUpDb(select_all, select_all_partner);// update the table again
+void MainWindow::onToolCellClicked(int _row, int _col){
+    QTableWidgetItem *item = ui->main_tableWidget->item(_row,_col);
+    if(!item || item->text().isEmpty()){
+        if((_col != 7) || (_col != 0) || (_col != 8) || (_col != 9)){
+            if(_col == 7){
+                createComboWidget("Returned", _row);
+            }else if(_col == 0){
+                // add today's date to column 0 of the new row
+                QString today = QDate::currentDate().toString("d/M/yyyy");
+                ui->main_tableWidget->setItem(_row,_col, new QTableWidgetItem(today));
+                // then add a new row
+                int current_rowCount = ui->main_tableWidget->rowCount();
+                ui->main_tableWidget->insertRow(current_rowCount);
+                // update others
+                createComboWidget("Pending", _row);
+                tools_autoComplete(QString(""), _row);
+                engineers_autoComplete(QString(""),_row);
+            }else if (_col == 8) {
+                ui->main_tableWidget->setItem(_row,_col, new QTableWidgetItem(str_user));
+            }else if(_col == 9){
+                ui->main_tableWidget->setItem(_row,_col, new QTableWidgetItem(str_user));
+            }
+        }
+    }
 }
-
-void MainWindow::saveTable(){
+void MainWindow::deleteToolsTable(){
+           QSqlQuery  del_query(QSqlDatabase::database(conn_tools));
+           del_query.exec("DELETE FROM Tools");
+}
+void MainWindow::saveToolsTable(){
     bool _break = false;
     for(int r = 0; r < ui->main_tableWidget->rowCount(); r++){
         QStringList db_items;
@@ -428,11 +547,11 @@ void MainWindow::saveTable(){
         }
         if(_break)
             break;
-        saveToDb(db_items);
+        saveToolsToDb(db_items);
     }
 }
-void MainWindow::saveToDb(QStringList _items){
-     QSqlQuery entry_query(QSqlDatabase::database("conn_main"));
+void MainWindow::saveToolsToDb(QStringList _items){
+     QSqlQuery entry_query(QSqlDatabase::database(conn_tools));
      QString command = "INSERT INTO Tools VALUES(?,?,?,?,?,?,?,?,?,?)";
      entry_query.prepare(command);
      // binding
@@ -440,12 +559,12 @@ void MainWindow::saveToDb(QStringList _items){
          entry_query.bindValue(i,_items[i]);
      }
      if(entry_query.exec()){
-         updateLabel("Success", "save=success");
+         updateToolsLabel("Success", "save=success");
      }else{
-         updateLabel("Error",entry_query.lastError().text());
+         updateToolsLabel("Error",entry_query.lastError().text());
          }
 }
-void MainWindow::updateLabel(QString _type, QString _ref)
+void MainWindow::updateToolsLabel(QString _type, QString _ref)
 {
     QTime ct = QTime::currentTime();
     QString _time = ct.toString("hh:mm:ss.zzz");
@@ -455,55 +574,15 @@ void MainWindow::updateLabel(QString _type, QString _ref)
     QString lbl_text = _time + " : " + _lastSave+ "<"+_type+"> ;(StatusBar)";
     ui->save_label->setText(lbl_text);
 }
-void MainWindow::deleteDbTable(){
-           QSqlQuery  del_query(QSqlDatabase::database("conn_main"));
-           del_query.exec("DELETE FROM Tools");
-}
-
-void MainWindow::resizeEvent(QResizeEvent *event){
-    int size = 10;// No of the header items
-    ui->main_tableWidget->setColumnWidth(0, this->width()/size);
-    ui->main_tableWidget->setColumnWidth(1, this->width()/size);
-    ui->main_tableWidget->setColumnWidth(2, this->width()/size);
-    ui->main_tableWidget->setColumnWidth(3, this->width()/size);
-    ui->main_tableWidget->setColumnWidth(4, this->width()/size);
-    ui->main_tableWidget->setColumnWidth(5, this->width()/size);
-    ui->main_tableWidget->setColumnWidth(6, this->width()/size);
-    ui->main_tableWidget->setColumnWidth(7, this->width()/size);
-    ui->main_tableWidget->setColumnWidth(8, this->width()/size);
-    ui->main_tableWidget->setColumnWidth(9, this->width()/size);
-
-    QMainWindow::resizeEvent(event);
-}
-void MainWindow::closeEvent (QCloseEvent *event){
-    QMessageBox::StandardButton resBtn = QMessageBox::question( this, "Boito Tools",
-                                                                tr("Are you sure you want to close the application?\n"),
-                                                                QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
-                                                                QMessageBox::Yes);
-    if (resBtn != QMessageBox::Yes) {
-        event->ignore();
-    } else {
-        if(ui->save_pushButton->isEnabled()){
-            deleteDbTable();// delete ...
-            saveTable();// and save table before exit
-        }else{
-            restoreDisplay();
-            deleteDbTable();
-            saveTable();
-        }
-        event->accept();
-    }
-}
 void MainWindow::nameSearch()
 {
     QString search_item = ui->Name_lineEdit->text();
     if(!search_item.isEmpty()){
         ui->save_pushButton->setEnabled(false);
         QString command_line = "SELECT * FROM Tools WHERE Name = ? ";
-        pullUpDb(command_line, search_item);
+        pullUpToolsDb(command_line, search_item);
     }
 }
-
 void MainWindow::toolSearch()
 {
     QString  search_item = ui->search_lineEdit->text();
@@ -515,19 +594,17 @@ void MainWindow::toolSearch()
         }
     }
 }
-
 void MainWindow::restoreDisplay()
 {
-    pullUpDb(select_all,select_all_partner);
+    pullUpToolsDb(select_all,select_all_partner);
     ui->save_pushButton->setEnabled(true);
 }
-
 void MainWindow::onPendingClicked()
 {
     QString bind_value = "Pending";
     QString command = "SELECT * FROM Tools WHERE Status = ? ";
     ui->save_pushButton->setEnabled(false);
-    pullUpDb(command, bind_value);
+    pullUpToolsDb(command, bind_value);
 }
 
 void MainWindow::onPrintClicked()
@@ -600,11 +677,10 @@ void MainWindow::onPrintClicked()
     doc.print(&printer);
     QDesktopServices::openUrl(QUrl::fromLocalFile(output_fileName));
 }
-
 void MainWindow::onAuditClicked()
 {
     QString pending  = "Pending";
-    QSqlQuery aq_tools(QSqlDatabase::database("conn_main"));
+    QSqlQuery aq_tools(QSqlDatabase::database(conn_tools));
     aq_tools.prepare("SELECT Item, No FROM Tools WHERE Status = ? ");
     aq_tools.bindValue(0,pending);
     if(aq_tools.exec()){
@@ -669,69 +745,222 @@ void MainWindow::onAuditClicked()
     dialog->setLayout(vbox);
     dialog->exec();
 }
+
+/*###############                    Page 2                   #######################*/
+bool MainWindow::connectConsumablesDb(){
+    const QString DRIVER("QSQLITE");
+    cons_db = QSqlDatabase::addDatabase(DRIVER,conn_consumables);
+    cons_db.setDatabaseName(consumables_db);
+    if(!cons_db.open()){
+        QMessageBox::critical(nullptr, QObject::tr("Critical Error"),
+                  QObject::tr("Could not find consumable DB file \n\n"
+                              "Click Cancel to exit."), QMessageBox::Cancel);
+        return false;
+    }
+    return true;
+}
+void MainWindow::pullUpConsumables(QString command, QStringList bind_values){
+    // clear  grounds
+    ui->consumable_tableWidget->clearContents();
+    ui->consumable_tableWidget->setRowCount(0);
+    // query
+    QSqlQuery q_consum(QSqlDatabase::database(conn_consumables));
+    q_consum.prepare(command);
+    if(!bind_values.empty()){
+        const int Num = bind_values.size();
+        for(int i = 0; i < Num; i++){
+            q_consum.bindValue(i,bind_values[i]);
+        }
+    }else{
+        ui->consumable_tableWidget->setRowCount(3);
+    }
+
+    if(q_consum.exec()){
+        int date_no = q_consum.record().indexOf("Date");
+        int item_no = q_consum.record().indexOf("Item");
+        int no_no = q_consum.record().indexOf("No");
+        int section_no = q_consum.record().indexOf("Section");
+        int receiver_no = q_consum.record().indexOf("Issued_to");
+        int sign_no = q_consum.record().indexOf("Sign");
+        int issued_no = q_consum.record().indexOf("Issued_by");
+        int r = 0;
+        while(q_consum.next()){
+            ui->consumable_tableWidget->insertRow(ui->consumable_tableWidget->rowCount());//increase rows each by one
+            QStringList db_items;
+            db_items << q_consum.value(date_no).toString();
+            db_items << q_consum.value(item_no).toString();
+            db_items << q_consum.value(no_no).toString();
+            db_items << q_consum.value(section_no).toString();
+            db_items << q_consum.value(receiver_no).toString();
+            db_items << q_consum.value(sign_no).toString();
+            db_items << q_consum.value(issued_no).toString();
+
+            for(int c = 0; c < ui->consumable_tableWidget->columnCount(); c++){
+               if(c == 1){
+                   consumableItem(db_items[c], r);
+               }else if(c == 4){
+                   consumableReceiver(db_items[c],r);
+               }else{
+                   ui->consumable_tableWidget->setItem(r,c, new QTableWidgetItem(db_items[c]));
+               }
+            }
+            r++;
+        }
+    }
+}
+void MainWindow::consumableItem(QString item, int r){
+    QLineEdit *consumable_edit = new QLineEdit();
+    QCompleter *consumable_completer = new QCompleter(consumable_names);
+    consumable_completer->setCaseSensitivity(Qt::CaseInsensitive);
+    consumable_completer->setFilterMode(Qt::MatchContains);
+    consumable_edit->setCompleter(consumable_completer);
+    consumable_edit->setText(item);
+    ui->consumable_tableWidget->setCellWidget(r,1,consumable_edit);
+}
+void MainWindow::consumableReceiver(QString item, int r){
+    QLineEdit *consumable_edit = new QLineEdit();
+    QCompleter *consumable_completer = new QCompleter(engineers_names);
+    consumable_completer->setCaseSensitivity(Qt::CaseInsensitive);
+    consumable_completer->setFilterMode(Qt::MatchContains);
+    consumable_edit->setCompleter(consumable_completer);
+    consumable_edit->setText(item);
+    ui->consumable_tableWidget->setCellWidget(r,4,consumable_edit);
+}
+void MainWindow::consumablesHandler(){
+    QSqlQuery q_consum_1(QSqlDatabase::database(conn_consumables));
+    q_consum_1.exec("DELETE FROM consumables");
+
+    saveConsumables();
+    QString command = "SELECT * FROM consumables";
+    pullUpConsumables(command, QStringList{});
+}
+void MainWindow::saveConsumables(){
+    bool _break = false;
+    for(int r = 0; r < ui->consumable_tableWidget->rowCount(); r++){
+        QStringList db_items;
+        for(int c = 0; c < ui->consumable_tableWidget->columnCount(); c++){
+            QTableWidgetItem *item = ui->consumable_tableWidget->item(r,c);
+            QString  item_string;
+            if(c == 0 && (!item || item->text().isEmpty())){
+                _break = true;
+                break;
+            }
+            if(c == 1){
+                QLineEdit *consumable_item = qobject_cast<QLineEdit*>(ui->consumable_tableWidget->cellWidget(r,1));
+                item_string = consumable_item->text();
+                db_items << item_string;
+            }else if(c == 4){
+                QLineEdit *engineer_item = qobject_cast<QLineEdit*>(ui->consumable_tableWidget->cellWidget(r,4));
+                item_string = engineer_item->text();
+                db_items << item_string;
+            }else{
+                if(!item || item->text().isEmpty())
+                    ui->consumable_tableWidget->setItem(r,c,new QTableWidgetItem(QString("")));
+                item_string = ui->consumable_tableWidget->item(r,c)->text();
+                db_items << item_string;
+            }
+        }
+        if(_break)
+            break;
+        saveConsumablesToDb(db_items);
+    }
+}
+void MainWindow::saveConsumablesToDb(QStringList db_items){
+    QSqlQuery entry_query(QSqlDatabase::database(conn_consumables));
+    QString command = "INSERT INTO consumables VALUES(?,?,?,?,?,?,?)";
+    entry_query.prepare(command);
+    // binding
+    for(int i = 0; i < db_items.size(); i++){
+        entry_query.bindValue(i,db_items[i]);
+    }
+    // Constants
+    QTime ct = QTime::currentTime();
+    QString _time = ct.toString("hh:mm:ss.zzz");
+    QString _lastSave = "last saved";
+
+    if(entry_query.exec()){
+        ui->statusbar->showMessage("save=success");
+
+        QString lbl_text = _time + " : " + _lastSave+ "<" + "Success" + "> ;(StatusBar)";
+        ui->status2_label->setText(lbl_text);
+    }else{
+        ui->statusbar->showMessage(entry_query.lastError().text());
+
+        QString lbl_text = _time + " : " + _lastSave+ "<" + "Error" + "> ;(StatusBar)";
+        ui->status2_label->setText(lbl_text);
+        }
+}
+void MainWindow::onConsumableCellClicked(int r, int c){
+    QTableWidgetItem *item = ui->consumable_tableWidget->item(r,c);
+    if(!item || item->text().isEmpty()){
+        if(c == 0){
+            // set other cell widgets
+            // add today's date to column 0 of the new row
+            QString today = QDate::currentDate().toString("d/M/yyyy");
+            ui->consumable_tableWidget->setItem(r,0, new QTableWidgetItem(today));
+            // item
+            consumableItem(QString(""), r);
+            consumableReceiver(QString(""), r);
+            // insert item
+            ui->consumable_tableWidget->setItem(r, 6, new QTableWidgetItem(str_user));
+            // insert a new row
+            ui->consumable_tableWidget->insertRow(ui->consumable_tableWidget->rowCount());
+        }
+    }
+}
+void MainWindow::itemSearch(){
+    QString field_item = ui->field_comboBox->currentText();
+    QString field_item_rel = ui->item_lineEdit->text();
+    QStringList bind_values = {field_item_rel};
+
+    QString command = "SELECT * FROM consumables WHERE " + field_item + "= ?";
+    pullUpConsumables(command, bind_values);
+    ui->save2_pushButton->setEnabled(false);
+}
+void MainWindow::restoreConsDisp(){
+    QString command = "SELECT * FROM consumables";
+    pullUpConsumables(command, QStringList{});
+    ui->save2_pushButton->setEnabled(true);
+}
+
+/************************                           Clean Up & Event handlers                   *******************/
+void MainWindow::resizeEvent(QResizeEvent *event){
+    int size = 10;// No of the header items
+    ui->main_tableWidget->setColumnWidth(0, this->width()/size);
+    ui->main_tableWidget->setColumnWidth(1, this->width()/size);
+    ui->main_tableWidget->setColumnWidth(2, this->width()/size);
+    ui->main_tableWidget->setColumnWidth(3, this->width()/size);
+    ui->main_tableWidget->setColumnWidth(4, this->width()/size);
+    ui->main_tableWidget->setColumnWidth(5, this->width()/size);
+    ui->main_tableWidget->setColumnWidth(6, this->width()/size);
+    ui->main_tableWidget->setColumnWidth(7, this->width()/size);
+    ui->main_tableWidget->setColumnWidth(8, this->width()/size);
+    ui->main_tableWidget->setColumnWidth(9, this->width()/size);
+
+    QMainWindow::resizeEvent(event);
+}
+void MainWindow::closeEvent (QCloseEvent *event){
+    QMessageBox::StandardButton resBtn = QMessageBox::question( this, "Boito Tools",
+                                                                tr("Are you sure you want to close the application?\n"),
+                                                                QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
+                                                                QMessageBox::Yes);
+    if (resBtn != QMessageBox::Yes) {
+        event->ignore();
+    } else {
+        if(ui->save_pushButton->isEnabled()){
+            deleteToolsTable();
+            saveToolsTable();
+            saveConsumables();
+        }else{
+            restoreDisplay();
+           ui->save_pushButton->click();
+           ui->save2_pushButton->click();
+        }
+        ui->savep0_pushButton->click();
+        event->accept();
+    }
+}
 MainWindow::~MainWindow()
 {
     delete ui;
 }
-
-void MainWindow::checkForDrivers()
-{
-    const QString DRIVER("QSQLITE");
-    if(!QSqlDatabase::isDriverAvailable(DRIVER)){
-        QMessageBox::critical(nullptr, QObject::tr("Critical Error"),
-                  QObject::tr("Unable to establish a database connection.\n"
-                              "This project needs SQLite support. Please read "
-                              "the Qt SQL driver documentation for information how "
-                              "to build it.\n\n"
-                              "Click Cancel to exit."), QMessageBox::Cancel);
-    }
-}
-
-void MainWindow::checkForDatabases()
-{
-    const QString DRIVER = "QSQLITE";
-    const QString tools_db = "db.db";
-    const QString start_up = "up_db";
-    if(QFile::exists(tools_db) && QFile::exists(start_up)){
-        return;
-    }else{
-        // Create databases
-        //tools_db
-        const QString tools_conn = "tools_conn";
-        QSqlDatabase tools = QSqlDatabase::addDatabase(DRIVER, tools_conn);
-        tools.setDatabaseName(tools_db);
-        tools.open();
-        QSqlQuery q_tools(QSqlDatabase::database(tools_conn));
-        q_tools.exec("CREATE TABLE Tools(Date TEXT, Item TEXT,No TEXT, Section TEXT,"
-                     " Name TEXT, Sign TEXT, Status TEXT, Condition TEXT,Issued_by TEXT, Received_by TEXT)");
-        tools.close();
-
-        //data_db
-        const QString data_conn = "data_conn";
-        QSqlDatabase data_container = QSqlDatabase::addDatabase(DRIVER, data_conn);
-        data_container.setDatabaseName(start_up);
-        data_container.open();
-
-        QSqlQuery q_user(QSqlDatabase::database(data_conn));
-        q_user.prepare("CREATE TABLE Users(Names TEXT)");
-        if(q_user.exec()){
-            QStringList  data_items = {"Tonui","Alan"};
-            for(int i = 0; i < data_items.size(); i++){
-                QSqlQuery insert_user(QSqlDatabase::database(data_conn));
-                insert_user.prepare("INSERT INTO Users VALUES(?)");
-                insert_user.bindValue(0,data_items[i]);
-                if(!insert_user.exec()){
-                    break;
-                }
-            }
-        }
-
-        QStringList sql_commands = {"CREATE TABLE Engineers (Names TEXT)","CREATE TABLE MainTools (Items TEXT, Num TEXT)"};
-        for(int i = 0; i < sql_commands.size(); i++){
-            QSqlQuery create_query(QSqlDatabase::database(data_conn));
-            create_query.exec(sql_commands[i]);
-        }
-        data_container.close();
-    }
-}
-

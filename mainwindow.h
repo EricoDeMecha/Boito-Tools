@@ -42,16 +42,52 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    /*          SQLs           */
+    const QString DRIVER = "QSQLITE";
+    const QString tools_db = "Tools";
+    const QString entries_db = "Entries";
+    const QString consumables_db = "Consumables";
+    const QString login_db = "Login";
+
+    /*   PAGE  0 (entries)*/
+    const QString conn_entries = "conn_entries";
+    QStringList tool_names;
+    QStringList consumable_names;
+    // funcs
+    bool createEntriesConnection();
+    void pullUpEntriesDB();
+    void createTypeCombo(int r, int _type);
+    /* PAGE 1 (tools)*/
+    QString str_user;
+    QStringList engineers_names;
+    const QString conn_tools = "conn_tools";
+
+    bool createToolsConnection();
+    void pullUpToolsDb(QString  command , QString bind_value);
+    void createComboWidget(QString status_string, int r);
+    void tools_autoComplete(QString t_item,int r);
+    void engineers_autoComplete(QString t_item,int r);
+    void saveToolsToDb(QStringList _items);
+    void deleteToolsTable();
+    void saveToolsTable();
+    void updateToolsLabel(QString _type, QString _ref);
+
+    /*           PAGE 2            */
+    const QString conn_consumables = "conn_consumables";
+    bool connectConsumablesDb();
+    QSqlDatabase cons_db;
+    void pullUpConsumables(QString command, QStringList bind_values);
+    void consumableItem(QString item,  int r);
+    void consumableReceiver(QString item, int r);
+    void saveConsumables();
+    void saveConsumablesToDb(QStringList db_items);
+
     /*start-up stuff*/
     QStringList user_names;
     QSqlDatabase up_db;
-    QString str_user;
-    QStringList tool_names;
-    QStringList engineers_names;
     QHash<QString, int> tools_audit;
 
-    bool createMainConnection();
-    void pullUpStartDB();
+
     /*container*/
     QHash<QString, int> pending_tools_audit;
     /*Print counter*/
@@ -62,32 +98,28 @@ private:
     // sqlite
     void checkForDrivers();
     void checkForDatabases();
-    bool createConnection();
-    void saveToDb(QStringList _items);
-    void deleteDbTable();
-    void pullUpDb(QString  command , QString bind_value);
-    void saveTable();
-    /*main-application*/
+
+    /*       Event handler         */
     void closeEvent (QCloseEvent *event);
-    void updateLabel(QString _type, QString _ref);
-    /*Let's create widgets*/
-    void createComboWidget(QString status_string, int r);
-    void tools_autoComplete(QString t_item,int r);
-    void engineers_autoComplete(QString t_item,int r);
-    /*MainWindow construct*/
-    void constructMain();
 private slots:
-    void mainHandler();
-    void onCellClicked(int _row, int _col);
+    /*          PAGE 0       */
+    void onEngineersCellClicked(int,int);
+    void onToolsCellClicked(int,int);
+    void saveEntries();
+
+    /*          PAGE 1      */
+    void onToolCellClicked(int _row, int _col);
     void nameSearch();
     void toolSearch();
     void restoreDisplay();
     void onPendingClicked();
     void onPrintClicked();
     void onAuditClicked();
-    void onEngineersCellClicked(int,int);
-    void onToolsCellClicked(int,int);
-    void saveData();
-    void quitMain();
+
+   /*           PAGE 2         */
+    void consumablesHandler();
+    void onConsumableCellClicked(int , int );
+    void itemSearch();
+    void restoreConsDisp();
 };
 #endif // MAINWINDOW_H
