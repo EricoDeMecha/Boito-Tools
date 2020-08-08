@@ -222,6 +222,11 @@
                 <pointsize>11</pointsize>
                </font>
               </property>
+              <property name="styleSheet">
+               <string notr="true">QPushButton{
+	background-color: rgb(71, 244, 146);
+}</string>
+              </property>
               <property name="text">
                <string>Consumables </string>
               </property>
@@ -233,6 +238,11 @@
                <font>
                 <pointsize>11</pointsize>
                </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QPushButton{
+	background-color:rgb(107, 252, 246);
+}</string>
               </property>
               <property name="text">
                <string>Non-Consumable</string>
@@ -257,7 +267,15 @@
               <property name="font">
                <font>
                 <pointsize>11</pointsize>
+                <weight>75</weight>
+                <bold>true</bold>
+                <underline>true</underline>
                </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QPushButton{
+	background-color: rgb(52, 101, 164);
+}</string>
               </property>
               <property name="text">
                <string>Save</string>
@@ -305,19 +323,12 @@
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="Name_lineEdit">
-              <property name="toolTip">
-               <string/>
-              </property>
-              <property name="placeholderText">
-               <string>Enter engineer's name</string>
-              </property>
-             </widget>
+             <widget class="QComboBox" name="specific_comboBox"/>
             </item>
             <item>
              <widget class="QLineEdit" name="search_lineEdit">
               <property name="placeholderText">
-               <string>Enter specifying item.</string>
+               <string>Search</string>
               </property>
              </widget>
             </item>
@@ -327,6 +338,11 @@
                <font>
                 <pointsize>11</pointsize>
                </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QPushButton{
+	background-color: rgb(241, 235, 105);
+}</string>
               </property>
               <property name="text">
                <string>Restore</string>
@@ -357,6 +373,11 @@
                 <pointsize>11</pointsize>
                </font>
               </property>
+              <property name="styleSheet">
+               <string notr="true">QPushButton{
+	background-color:rgb(191, 64, 172);
+}</string>
+              </property>
               <property name="text">
                <string>Home</string>
               </property>
@@ -368,6 +389,11 @@
                <font>
                 <pointsize>11</pointsize>
                </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QPushButton{
+	background-color: rgb(71, 244, 146);
+}</string>
               </property>
               <property name="text">
                <string>Consumables </string>
@@ -389,9 +415,14 @@
             </item>
             <item>
              <widget class="QPushButton" name="audit_pushButton">
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
               <property name="styleSheet">
                <string notr="true">QPushButton{
-	background-color:rgb(191, 64, 172);
+	background-color:rgb(78, 154, 6);
 }</string>
               </property>
               <property name="text">
@@ -401,6 +432,11 @@
             </item>
             <item>
              <widget class="QPushButton" name="print_pushButton">
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
               <property name="styleSheet">
                <string notr="true">QPushButton{
 	background-color:rgb(193, 125, 17)
@@ -415,6 +451,7 @@
              <widget class="QPushButton" name="pending_pushButton">
               <property name="font">
                <font>
+                <pointsize>11</pointsize>
                 <weight>50</weight>
                 <bold>false</bold>
                 <underline>false</underline>
@@ -422,7 +459,7 @@
               </property>
               <property name="styleSheet">
                <string notr="true">QPushButton{
-	background-color:rgb(237, 212, 0);
+	background-color:rgb(181, 147, 238);
 }</string>
               </property>
               <property name="text">
@@ -493,6 +530,16 @@
             </item>
             <item>
              <widget class="QPushButton" name="restore2_pushButton">
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QPushButton{
+	background-color: rgb(241, 235, 105);
+}</string>
+              </property>
               <property name="text">
                <string>Restore</string>
               </property>
@@ -518,6 +565,16 @@
             </item>
             <item>
              <widget class="QPushButton" name="home2_pushButton">
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QPushButton{
+	background-color:rgb(191, 64, 172);
+}</string>
+              </property>
               <property name="text">
                <string>Home</string>
               </property>
@@ -525,6 +582,16 @@
             </item>
             <item>
              <widget class="QPushButton" name="noncon_pushButton">
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QPushButton{
+	background-color:rgb(107, 252, 246);
+}</string>
+              </property>
               <property name="text">
                <string>Non-Consumables</string>
               </property>
@@ -544,7 +611,54 @@
              </spacer>
             </item>
             <item>
+             <widget class="QPushButton" name="printcons_pushButton">
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QPushButton{
+	background-color: rgb(193, 125, 17);
+}</string>
+              </property>
+              <property name="text">
+               <string>Print</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="auditcons_pushButton">
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QPushButton{
+	background-color:rgb(78, 154, 6);
+}</string>
+              </property>
+              <property name="text">
+               <string>Audit</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QPushButton" name="save2_pushButton">
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+                <weight>75</weight>
+                <bold>true</bold>
+                <underline>true</underline>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QPushButton{
+	background-color:rgb(114, 159, 207);
+}</string>
+              </property>
               <property name="text">
                <string>Save</string>
               </property>

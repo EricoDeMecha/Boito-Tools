@@ -29,6 +29,7 @@ FORMS += \
     mainwindow.ui
 
 win32:RC_ICONS += app_icon.ico
+# QMAKE_LFLAGS += /MANIFESTUAC:"level='requireAdministrator' uiAccess='false'"
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin

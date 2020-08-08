@@ -824,6 +824,24 @@ moc_login.cpp: ../login.h \
 		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtCore/qfiledevice.h \
 		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtGui/qvector2d.h \
 		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtGui/qtouchdevice.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtSql/QSqlDatabase \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtSql/qsqldatabase.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtSql/qtsqlglobal.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtSql/qtsql-config.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtSql/QSqlDriver \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtSql/qsqldriver.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtSql/QSqlError \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtSql/qsqlerror.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtSql/QSqlQuery \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtSql/qsqlquery.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtSql/QSqlRecord \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtSql/qsqlrecord.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/QMessageBox \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qmessagebox.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtCore/QDebug \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/QCompleter \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qcompleter.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtCore/qabstractitemmodel.h \
 		moc_predefs.h \
 		/opt/Qt5.13.2/5.13.2/gcc_64/bin/moc
 	/opt/Qt5.13.2/5.13.2/gcc_64/bin/moc $(DEFINES) --include /home/openqt/Documents/cute/BoitoTools/build/moc_predefs.h -I/opt/Qt5.13.2/5.13.2/gcc_64/mkspecs/linux-g++ -I/home/openqt/Documents/cute/BoitoTools -I/opt/Qt5.13.2/5.13.2/gcc_64/include -I/opt/Qt5.13.2/5.13.2/gcc_64/include/QtPrintSupport -I/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets -I/opt/Qt5.13.2/5.13.2/gcc_64/include/QtGui -I/opt/Qt5.13.2/5.13.2/gcc_64/include/QtSql -I/opt/Qt5.13.2/5.13.2/gcc_64/include/QtCore -I. -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../login.h -o moc_login.cpp
@@ -1149,7 +1167,53 @@ login.o: ../login.cpp ../login.h \
 		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtCore/qfiledevice.h \
 		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtGui/qvector2d.h \
 		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtGui/qtouchdevice.h \
-		ui_login.h
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtSql/QSqlDatabase \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtSql/qsqldatabase.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtSql/qtsqlglobal.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtSql/qtsql-config.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtSql/QSqlDriver \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtSql/qsqldriver.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtSql/QSqlError \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtSql/qsqlerror.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtSql/QSqlQuery \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtSql/qsqlquery.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtSql/QSqlRecord \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtSql/qsqlrecord.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/QMessageBox \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qmessagebox.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtCore/QDebug \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/QCompleter \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qcompleter.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtCore/qabstractitemmodel.h \
+		ui_login.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtCore/QVariant \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/QApplication \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qapplication.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtCore/qcoreapplication.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtCore/qeventloop.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qdesktopwidget.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtGui/qguiapplication.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtGui/qinputmethod.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/QHBoxLayout \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qboxlayout.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qlayout.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qlayoutitem.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qgridlayout.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/QLabel \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qlabel.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qframe.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/QLineEdit \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qlineedit.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtGui/qtextcursor.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtGui/qtextformat.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtGui/qpen.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtGui/qtextoption.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/QPushButton \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qpushbutton.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qabstractbutton.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtGui/qicon.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/QSpacerItem \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/QVBoxLayout
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o login.o ../login.cpp
 
 main.o: ../main.cpp ../mainwindow.h \
@@ -1562,6 +1626,8 @@ mainwindow.o: ../mainwindow.cpp ../mainwindow.h \
 		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qstatusbar.h \
 		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/QVBoxLayout \
 		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/QWidget \
+		../login.h \
+		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/QDialog \
 		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/QFileDialog \
 		/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets/qfiledialog.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../mainwindow.cpp

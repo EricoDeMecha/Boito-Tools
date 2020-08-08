@@ -34,6 +34,9 @@ private:
 
     bool loginDbConnection();
     void login_data();
+    bool eventFilter(QObject *, QEvent *);
+private slots:
+    void  delete_identity();
 };
 
 #endif // LOGIN_H

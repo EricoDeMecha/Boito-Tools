@@ -66,7 +66,7 @@ public:
     QHBoxLayout *horizontalLayout_8;
     QSpacerItem *horizontalSpacer_11;
     QLabel *search_label_2;
-    QLineEdit *Name_lineEdit;
+    QComboBox *specific_comboBox;
     QLineEdit *search_lineEdit;
     QPushButton *restore1_pushButton;
     QTableWidget *main_tableWidget;
@@ -95,6 +95,8 @@ public:
     QPushButton *home2_pushButton;
     QPushButton *noncon_pushButton;
     QSpacerItem *horizontalSpacer_12;
+    QPushButton *printcons_pushButton;
+    QPushButton *auditcons_pushButton;
     QPushButton *save2_pushButton;
     QMenuBar *menubar;
     QStatusBar *statusbar;
@@ -229,12 +231,18 @@ public:
         consumablep0_pushButton = new QPushButton(page);
         consumablep0_pushButton->setObjectName(QString::fromUtf8("consumablep0_pushButton"));
         consumablep0_pushButton->setFont(font1);
+        consumablep0_pushButton->setStyleSheet(QString::fromUtf8("QPushButton{\n"
+"	background-color: rgb(71, 244, 146);\n"
+"}"));
 
         horizontalLayout_10->addWidget(consumablep0_pushButton);
 
         nonconp0_pushButton = new QPushButton(page);
         nonconp0_pushButton->setObjectName(QString::fromUtf8("nonconp0_pushButton"));
         nonconp0_pushButton->setFont(font1);
+        nonconp0_pushButton->setStyleSheet(QString::fromUtf8("QPushButton{\n"
+"	background-color:rgb(107, 252, 246);\n"
+"}"));
 
         horizontalLayout_10->addWidget(nonconp0_pushButton);
 
@@ -244,7 +252,15 @@ public:
 
         savep0_pushButton = new QPushButton(page);
         savep0_pushButton->setObjectName(QString::fromUtf8("savep0_pushButton"));
-        savep0_pushButton->setFont(font1);
+        QFont font2;
+        font2.setPointSize(11);
+        font2.setBold(true);
+        font2.setUnderline(true);
+        font2.setWeight(75);
+        savep0_pushButton->setFont(font2);
+        savep0_pushButton->setStyleSheet(QString::fromUtf8("QPushButton{\n"
+"	background-color: rgb(52, 101, 164);\n"
+"}"));
 
         horizontalLayout_10->addWidget(savep0_pushButton);
 
@@ -274,10 +290,10 @@ public:
 
         horizontalLayout_8->addWidget(search_label_2);
 
-        Name_lineEdit = new QLineEdit(page_2);
-        Name_lineEdit->setObjectName(QString::fromUtf8("Name_lineEdit"));
+        specific_comboBox = new QComboBox(page_2);
+        specific_comboBox->setObjectName(QString::fromUtf8("specific_comboBox"));
 
-        horizontalLayout_8->addWidget(Name_lineEdit);
+        horizontalLayout_8->addWidget(specific_comboBox);
 
         search_lineEdit = new QLineEdit(page_2);
         search_lineEdit->setObjectName(QString::fromUtf8("search_lineEdit"));
@@ -287,6 +303,9 @@ public:
         restore1_pushButton = new QPushButton(page_2);
         restore1_pushButton->setObjectName(QString::fromUtf8("restore1_pushButton"));
         restore1_pushButton->setFont(font1);
+        restore1_pushButton->setStyleSheet(QString::fromUtf8("QPushButton{\n"
+"	background-color: rgb(241, 235, 105);\n"
+"}"));
 
         horizontalLayout_8->addWidget(restore1_pushButton);
 
@@ -309,12 +328,18 @@ public:
         home1_pushButton = new QPushButton(page_2);
         home1_pushButton->setObjectName(QString::fromUtf8("home1_pushButton"));
         home1_pushButton->setFont(font1);
+        home1_pushButton->setStyleSheet(QString::fromUtf8("QPushButton{\n"
+"	background-color:rgb(191, 64, 172);\n"
+"}"));
 
         horizontalLayout_2->addWidget(home1_pushButton);
 
         consumable_pushButton = new QPushButton(page_2);
         consumable_pushButton->setObjectName(QString::fromUtf8("consumable_pushButton"));
         consumable_pushButton->setFont(font1);
+        consumable_pushButton->setStyleSheet(QString::fromUtf8("QPushButton{\n"
+"	background-color: rgb(71, 244, 146);\n"
+"}"));
 
         horizontalLayout_2->addWidget(consumable_pushButton);
 
@@ -324,14 +349,16 @@ public:
 
         audit_pushButton = new QPushButton(page_2);
         audit_pushButton->setObjectName(QString::fromUtf8("audit_pushButton"));
+        audit_pushButton->setFont(font1);
         audit_pushButton->setStyleSheet(QString::fromUtf8("QPushButton{\n"
-"	background-color:rgb(191, 64, 172);\n"
+"	background-color:rgb(78, 154, 6);\n"
 "}"));
 
         horizontalLayout_2->addWidget(audit_pushButton);
 
         print_pushButton = new QPushButton(page_2);
         print_pushButton->setObjectName(QString::fromUtf8("print_pushButton"));
+        print_pushButton->setFont(font1);
         print_pushButton->setStyleSheet(QString::fromUtf8("QPushButton{\n"
 "	background-color:rgb(193, 125, 17)\n"
 "}"));
@@ -340,25 +367,21 @@ public:
 
         pending_pushButton = new QPushButton(page_2);
         pending_pushButton->setObjectName(QString::fromUtf8("pending_pushButton"));
-        QFont font2;
-        font2.setBold(false);
-        font2.setUnderline(false);
-        font2.setWeight(50);
-        pending_pushButton->setFont(font2);
+        QFont font3;
+        font3.setPointSize(11);
+        font3.setBold(false);
+        font3.setUnderline(false);
+        font3.setWeight(50);
+        pending_pushButton->setFont(font3);
         pending_pushButton->setStyleSheet(QString::fromUtf8("QPushButton{\n"
-"	background-color:rgb(237, 212, 0);\n"
+"	background-color:rgb(181, 147, 238);\n"
 "}"));
 
         horizontalLayout_2->addWidget(pending_pushButton);
 
         save_pushButton = new QPushButton(page_2);
         save_pushButton->setObjectName(QString::fromUtf8("save_pushButton"));
-        QFont font3;
-        font3.setPointSize(11);
-        font3.setBold(true);
-        font3.setUnderline(true);
-        font3.setWeight(75);
-        save_pushButton->setFont(font3);
+        save_pushButton->setFont(font2);
         save_pushButton->setStyleSheet(QString::fromUtf8("QPushButton{\n"
 "	background-color: rgb(52, 101, 164);\n"
 "}"));
@@ -402,6 +425,10 @@ public:
 
         restore2_pushButton = new QPushButton(page_3);
         restore2_pushButton->setObjectName(QString::fromUtf8("restore2_pushButton"));
+        restore2_pushButton->setFont(font1);
+        restore2_pushButton->setStyleSheet(QString::fromUtf8("QPushButton{\n"
+"	background-color: rgb(241, 235, 105);\n"
+"}"));
 
         horizontalLayout->addWidget(restore2_pushButton);
 
@@ -427,11 +454,19 @@ public:
 
         home2_pushButton = new QPushButton(page_3);
         home2_pushButton->setObjectName(QString::fromUtf8("home2_pushButton"));
+        home2_pushButton->setFont(font1);
+        home2_pushButton->setStyleSheet(QString::fromUtf8("QPushButton{\n"
+"	background-color:rgb(191, 64, 172);\n"
+"}"));
 
         horizontalLayout_9->addWidget(home2_pushButton);
 
         noncon_pushButton = new QPushButton(page_3);
         noncon_pushButton->setObjectName(QString::fromUtf8("noncon_pushButton"));
+        noncon_pushButton->setFont(font1);
+        noncon_pushButton->setStyleSheet(QString::fromUtf8("QPushButton{\n"
+"	background-color:rgb(107, 252, 246);\n"
+"}"));
 
         horizontalLayout_9->addWidget(noncon_pushButton);
 
@@ -439,8 +474,30 @@ public:
 
         horizontalLayout_9->addItem(horizontalSpacer_12);
 
+        printcons_pushButton = new QPushButton(page_3);
+        printcons_pushButton->setObjectName(QString::fromUtf8("printcons_pushButton"));
+        printcons_pushButton->setFont(font1);
+        printcons_pushButton->setStyleSheet(QString::fromUtf8("QPushButton{\n"
+"	background-color: rgb(193, 125, 17);\n"
+"}"));
+
+        horizontalLayout_9->addWidget(printcons_pushButton);
+
+        auditcons_pushButton = new QPushButton(page_3);
+        auditcons_pushButton->setObjectName(QString::fromUtf8("auditcons_pushButton"));
+        auditcons_pushButton->setFont(font1);
+        auditcons_pushButton->setStyleSheet(QString::fromUtf8("QPushButton{\n"
+"	background-color:rgb(78, 154, 6);\n"
+"}"));
+
+        horizontalLayout_9->addWidget(auditcons_pushButton);
+
         save2_pushButton = new QPushButton(page_3);
         save2_pushButton->setObjectName(QString::fromUtf8("save2_pushButton"));
+        save2_pushButton->setFont(font2);
+        save2_pushButton->setStyleSheet(QString::fromUtf8("QPushButton{\n"
+"	background-color:rgb(114, 159, 207);\n"
+"}"));
 
         horizontalLayout_9->addWidget(save2_pushButton);
 
@@ -482,11 +539,7 @@ public:
         nonconp0_pushButton->setText(QCoreApplication::translate("MainWindow", "Non-Consumable", nullptr));
         savep0_pushButton->setText(QCoreApplication::translate("MainWindow", "Save", nullptr));
         search_label_2->setText(QCoreApplication::translate("MainWindow", "Search", nullptr));
-#if QT_CONFIG(tooltip)
-        Name_lineEdit->setToolTip(QString());
-#endif // QT_CONFIG(tooltip)
-        Name_lineEdit->setPlaceholderText(QCoreApplication::translate("MainWindow", "Enter engineer's name", nullptr));
-        search_lineEdit->setPlaceholderText(QCoreApplication::translate("MainWindow", "Enter specifying item.", nullptr));
+        search_lineEdit->setPlaceholderText(QCoreApplication::translate("MainWindow", "Search", nullptr));
         restore1_pushButton->setText(QCoreApplication::translate("MainWindow", "Restore", nullptr));
         save_label->setText(QString());
         home1_pushButton->setText(QCoreApplication::translate("MainWindow", "Home", nullptr));
@@ -500,6 +553,8 @@ public:
         status2_label->setText(QString());
         home2_pushButton->setText(QCoreApplication::translate("MainWindow", "Home", nullptr));
         noncon_pushButton->setText(QCoreApplication::translate("MainWindow", "Non-Consumables", nullptr));
+        printcons_pushButton->setText(QCoreApplication::translate("MainWindow", "Print", nullptr));
+        auditcons_pushButton->setText(QCoreApplication::translate("MainWindow", "Audit", nullptr));
         save2_pushButton->setText(QCoreApplication::translate("MainWindow", "Save", nullptr));
     } // retranslateUi
 

@@ -43,6 +43,9 @@ public:
     QPushButton *login_pushButton;
     QPushButton *register_pushButton;
     QSpacerItem *horizontalSpacer_2;
+    QHBoxLayout *horizontalLayout_4;
+    QSpacerItem *horizontalSpacer_7;
+    QPushButton *delete_pushButton;
     QSpacerItem *verticalSpacer_3;
 
     void setupUi(QDialog *login)
@@ -50,6 +53,7 @@ public:
         if (login->objectName().isEmpty())
             login->setObjectName(QString::fromUtf8("login"));
         login->resize(384, 302);
+        login->setStyleSheet(QString::fromUtf8(""));
         verticalLayout_2 = new QVBoxLayout(login);
         verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
         verticalLayout = new QVBoxLayout();
@@ -125,12 +129,18 @@ public:
         login_pushButton = new QPushButton(login);
         login_pushButton->setObjectName(QString::fromUtf8("login_pushButton"));
         login_pushButton->setFont(font);
+        login_pushButton->setStyleSheet(QString::fromUtf8("QPushButton{\n"
+"	background-color: rgb(114, 159, 207)\n"
+"}"));
 
         horizontalLayout_3->addWidget(login_pushButton);
 
         register_pushButton = new QPushButton(login);
         register_pushButton->setObjectName(QString::fromUtf8("register_pushButton"));
         register_pushButton->setFont(font);
+        register_pushButton->setStyleSheet(QString::fromUtf8("QPushButton{\n"
+"	background-color: rgb(186, 189, 182)\n"
+"}"));
 
         horizontalLayout_3->addWidget(register_pushButton);
 
@@ -140,6 +150,24 @@ public:
 
 
         verticalLayout->addLayout(horizontalLayout_3);
+
+        horizontalLayout_4 = new QHBoxLayout();
+        horizontalLayout_4->setObjectName(QString::fromUtf8("horizontalLayout_4"));
+        horizontalLayout_4->setContentsMargins(-1, -1, -1, 0);
+        horizontalSpacer_7 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_4->addItem(horizontalSpacer_7);
+
+        delete_pushButton = new QPushButton(login);
+        delete_pushButton->setObjectName(QString::fromUtf8("delete_pushButton"));
+        delete_pushButton->setStyleSheet(QString::fromUtf8("QPushButton{\n"
+"	background-color:  rgb(164, 0, 0);\n"
+"}"));
+
+        horizontalLayout_4->addWidget(delete_pushButton);
+
+
+        verticalLayout->addLayout(horizontalLayout_4);
 
         verticalSpacer_3 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
@@ -163,6 +191,7 @@ public:
         password_lineEdit->setPlaceholderText(QCoreApplication::translate("login", "Enter  password", nullptr));
         login_pushButton->setText(QCoreApplication::translate("login", "Login", nullptr));
         register_pushButton->setText(QCoreApplication::translate("login", "Register", nullptr));
+        delete_pushButton->setText(QCoreApplication::translate("login", "Delete Identity", nullptr));
     } // retranslateUi
 
 };

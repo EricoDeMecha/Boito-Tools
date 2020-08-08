@@ -53,6 +53,8 @@ private:
     const QString conn_entries = "conn_entries";
     QStringList tool_names;
     QStringList consumable_names;
+    QSqlDatabase up_db;
+    QHash<QString, int> tools_audit;
     // funcs
     bool createEntriesConnection();
     void pullUpEntriesDB();
@@ -61,6 +63,7 @@ private:
     QString str_user;
     QStringList engineers_names;
     const QString conn_tools = "conn_tools";
+    QSqlDatabase db_tools;
 
     bool createToolsConnection();
     void pullUpToolsDb(QString  command , QString bind_value);
@@ -74,6 +77,9 @@ private:
 
     /*           PAGE 2            */
     const QString conn_consumables = "conn_consumables";
+    QHash<QString, int> consumables_audit;
+    QHash<QString, int> cons_fromDB;
+    QVector<QString>  SINs;
     bool connectConsumablesDb();
     QSqlDatabase cons_db;
     void pullUpConsumables(QString command, QStringList bind_values);
@@ -84,8 +90,6 @@ private:
 
     /*start-up stuff*/
     QStringList user_names;
-    QSqlDatabase up_db;
-    QHash<QString, int> tools_audit;
 
 
     /*container*/
@@ -109,7 +113,6 @@ private slots:
 
     /*          PAGE 1      */
     void onToolCellClicked(int _row, int _col);
-    void nameSearch();
     void toolSearch();
     void restoreDisplay();
     void onPendingClicked();
@@ -121,5 +124,7 @@ private slots:
     void onConsumableCellClicked(int , int );
     void itemSearch();
     void restoreConsDisp();
+    void printCons();
+    void auditCons();
 };
 #endif // MAINWINDOW_H
