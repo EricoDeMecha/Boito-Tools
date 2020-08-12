@@ -48,6 +48,8 @@ private:
     const QString entries_db = "Entries";
     const QString consumables_db = "Consumables";
     const QString login_db = "Login";
+    /*common functions */
+    QLineEdit* createSectionDropDown();
 
     /*   PAGE  0 (entries)*/
     const QString conn_entries = "conn_entries";

@@ -466,6 +466,9 @@ void MainWindow::pullUpToolsDb(QString  command , QString bind_value){
                     createComboWidget(db_items[c],r);
                 }else if(c == 1){
                     tools_autoComplete(db_items[c], r);
+                }else if(c == 3){
+                    QLineEdit *EditSection = createSectionDropDown();
+                    ui->main_tableWidget->setCellWidget(r,3,EditSection);
                 }else if(c == 4){
                     engineers_autoComplete(db_items[c], r);
                 }else{
@@ -510,7 +513,7 @@ void MainWindow::engineers_autoComplete(QString t_item,int r)
 void MainWindow::onToolCellClicked(int _row, int _col){
     QTableWidgetItem *item = ui->main_tableWidget->item(_row,_col);
     if(!item || item->text().isEmpty()){
-        if((_col != 7) || (_col != 0) || (_col != 8) || (_col != 9)){
+        if((_col != 7) || (_col != 0) || (_col != 8) || (_col != 9) || (_col != 3)){
             if(_col == 7){
                 createComboWidget("Returned", _row);
             }else if(_col == 0){
@@ -524,6 +527,7 @@ void MainWindow::onToolCellClicked(int _row, int _col){
                 createComboWidget("Pending", _row);
                 tools_autoComplete(QString(""), _row);
                 engineers_autoComplete(QString(""),_row);
+                ui->main_tableWidget->setCellWidget(_row,3,createSectionDropDown());
             }else if (_col == 8) {
                 ui->main_tableWidget->setItem(_row,_col, new QTableWidgetItem(str_user));
             }else if(_col == 9){
@@ -554,6 +558,10 @@ void MainWindow::saveToolsTable(){
             }else if(c == 1){
                 QLineEdit *tool_item = qobject_cast<QLineEdit*>(ui->main_tableWidget->cellWidget(r,1));
                 item_string = tool_item->text();
+                db_items << item_string;
+            }else if(c == 3){
+                QLineEdit *section = qobject_cast<QLineEdit *>(ui->main_tableWidget->cellWidget(r,3));
+                item_string = section->text();
                 db_items << item_string;
             }else if(c == 4){
                 QLineEdit *engineer_item = qobject_cast<QLineEdit*>(ui->main_tableWidget->cellWidget(r,4));
@@ -663,6 +671,9 @@ void MainWindow::onPrintClicked()
             }else if(c == 1){
                 QLineEdit *tool_item = qobject_cast<QLineEdit*>(ui->main_tableWidget->cellWidget(r,1));
                 item_string = tool_item->text();
+            }else if(c == 3){
+                QLineEdit *section = qobject_cast<QLineEdit *>(ui->main_tableWidget->cellWidget(r,3));
+                item_string = section->text();
             }else if(c == 4){
                 QLineEdit *engineer_item = qobject_cast<QLineEdit*>(ui->main_tableWidget->cellWidget(r,4));
                 item_string = engineer_item->text();
@@ -819,6 +830,10 @@ void MainWindow::pullUpConsumables(QString command, QStringList bind_values){
             for(int c = 0; c < ui->consumable_tableWidget->columnCount(); c++){
                if(c == 2){
                    consumableItem(db_items[c], r);
+               }else if(c == 4){
+                   QLineEdit *cellWid = createSectionDropDown();
+                   cellWid->setText(db_items[c]);
+                   ui->consumable_tableWidget->setCellWidget(r,4,cellWid);
                }else if(c == 5){
                    consumableReceiver(db_items[c],r);
                }else{
@@ -869,6 +884,10 @@ void MainWindow::saveConsumables(){
             if(c == 2){
                 QLineEdit *consumable_item = qobject_cast<QLineEdit*>(ui->consumable_tableWidget->cellWidget(r,2));
                 item_string = consumable_item->text();
+                db_items << item_string;
+            }else if(c == 4){
+                QLineEdit *section = qobject_cast<QLineEdit *>(ui->consumable_tableWidget->cellWidget(r,4));
+                item_string = section->text();
                 db_items << item_string;
             }else if(c == 5){
                 QLineEdit *engineer_item = qobject_cast<QLineEdit*>(ui->consumable_tableWidget->cellWidget(r,5));
@@ -924,6 +943,8 @@ void MainWindow::onConsumableCellClicked(int r, int c){
             consumableReceiver(QString(""), r);
             // insert item
             ui->consumable_tableWidget->setItem(r, 7, new QTableWidgetItem(str_user));
+            //  insert section
+            ui->consumable_tableWidget->setCellWidget(r,4,createSectionDropDown());
             // insert a new row
             ui->consumable_tableWidget->insertRow(ui->consumable_tableWidget->rowCount());
         }
@@ -933,9 +954,7 @@ void MainWindow::onConsumableCellClicked(int r, int c){
                 QString  temp_Sin = SINs.last();
                 //S/N-001
                 int sin_num = temp_Sin.right(3).toInt();
-                qDebug() << sin_num;
                 sin_num += 1;
-                qDebug() << sin_num;
                 sin_str = QString::number(sin_num);
                 for(int i = 0; i <= (4 - sin_str.length());i++){
                     sin_str.prepend('0');
@@ -994,10 +1013,13 @@ void MainWindow::printCons(){
                 break;
             }
             if(c == 2){
-                QLineEdit *consumable_item = qobject_cast<QLineEdit*>(ui->consumable_tableWidget->cellWidget(r,1));
+                QLineEdit *consumable_item = qobject_cast<QLineEdit*>(ui->consumable_tableWidget->cellWidget(r,2));
                 item_string = consumable_item->text();
+            }else if(c == 4){
+                QLineEdit *section = qobject_cast<QLineEdit *>(ui->consumable_tableWidget->cellWidget(r,4));
+                item_string = section->text();
             }else if(c == 5){
-                QLineEdit *engineer_item = qobject_cast<QLineEdit*>(ui->consumable_tableWidget->cellWidget(r,4));
+                QLineEdit *engineer_item = qobject_cast<QLineEdit*>(ui->consumable_tableWidget->cellWidget(r,5));
                 item_string = engineer_item->text();
             }else{
                 if(!item || item->text().isEmpty())
@@ -1092,6 +1114,15 @@ void MainWindow::auditCons(){
     dialog->setModal(true);
     dialog->setLayout(vbox);
     dialog->exec();
+}
+QLineEdit* MainWindow::createSectionDropDown(){
+    QStringList sections = {"Wethering","CTC","CFU","Driers","Sorting","Packing","Boiler","Pallets","Automotive","Power Room","Green Leaf","Water plant"};
+    QCompleter *comp = new QCompleter(sections);
+    comp->setCaseSensitivity(Qt::CaseInsensitive);
+    comp->setFilterMode(Qt::MatchContains);
+    QLineEdit *autoCompleteSection = new QLineEdit();
+    autoCompleteSection->setCompleter(comp);
+    return autoCompleteSection;
 }
 /************************                           Clean Up & Event handlers                   *******************/
 void MainWindow::resizeEvent(QResizeEvent *event){
