@@ -5,12 +5,12 @@ The software has been particularized for tool and consumables allocation in the 
  
 ## Preview
 ##### MainWindow
-![mainWindow]()
+![mainWindow](https://github.com/EricoDeMecha/Boito-Tools/blob/master/img/mainWindow.png)
 
 ##### Consumables
-![consumables]()
+![consumables](https://github.com/EricoDeMecha/Boito-Tools/blob/master/img/consumables.png)
 ##### Nonconsumables
-![non-consumables]()
+![non-consumables](https://github.com/EricoDeMecha/Boito-Tools/blob/master/img/nonConsumables.png)
 
 ## Getting started
 - For contributions or editing source code, make sure to have Qt 5.9.5 and above installed in your system.
