@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'login.ui'
 **
-** Created by: Qt User Interface Compiler version 5.13.2
+** Created by: Qt User Interface Compiler version 5.9.5
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -10,9 +10,12 @@
 #define UI_LOGIN_H
 
 #include <QtCore/QVariant>
+#include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QPushButton>
@@ -51,26 +54,26 @@ public:
     void setupUi(QDialog *login)
     {
         if (login->objectName().isEmpty())
-            login->setObjectName(QString::fromUtf8("login"));
+            login->setObjectName(QStringLiteral("login"));
         login->resize(384, 302);
-        login->setStyleSheet(QString::fromUtf8(""));
+        login->setStyleSheet(QStringLiteral(""));
         verticalLayout_2 = new QVBoxLayout(login);
-        verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
+        verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
         verticalLayout = new QVBoxLayout();
-        verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
+        verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
         verticalLayout->setContentsMargins(-1, -1, -1, 0);
         verticalSpacer_2 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
         verticalLayout->addItem(verticalSpacer_2);
 
         horizontalLayout = new QHBoxLayout();
-        horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
+        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
         horizontalSpacer_3 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
         horizontalLayout->addItem(horizontalSpacer_3);
 
         label = new QLabel(login);
-        label->setObjectName(QString::fromUtf8("label"));
+        label->setObjectName(QStringLiteral("label"));
         QFont font;
         font.setPointSize(12);
         label->setFont(font);
@@ -78,7 +81,7 @@ public:
         horizontalLayout->addWidget(label);
 
         username_lineEdit = new QLineEdit(login);
-        username_lineEdit->setObjectName(QString::fromUtf8("username_lineEdit"));
+        username_lineEdit->setObjectName(QStringLiteral("username_lineEdit"));
         username_lineEdit->setFont(font);
 
         horizontalLayout->addWidget(username_lineEdit);
@@ -91,19 +94,19 @@ public:
         verticalLayout->addLayout(horizontalLayout);
 
         horizontalLayout_2 = new QHBoxLayout();
-        horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
+        horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
         horizontalSpacer_5 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
         horizontalLayout_2->addItem(horizontalSpacer_5);
 
         label_2 = new QLabel(login);
-        label_2->setObjectName(QString::fromUtf8("label_2"));
+        label_2->setObjectName(QStringLiteral("label_2"));
         label_2->setFont(font);
 
         horizontalLayout_2->addWidget(label_2);
 
         password_lineEdit = new QLineEdit(login);
-        password_lineEdit->setObjectName(QString::fromUtf8("password_lineEdit"));
+        password_lineEdit->setObjectName(QStringLiteral("password_lineEdit"));
         password_lineEdit->setFont(font);
         password_lineEdit->setEchoMode(QLineEdit::Password);
 
@@ -121,24 +124,24 @@ public:
         verticalLayout->addItem(verticalSpacer);
 
         horizontalLayout_3 = new QHBoxLayout();
-        horizontalLayout_3->setObjectName(QString::fromUtf8("horizontalLayout_3"));
+        horizontalLayout_3->setObjectName(QStringLiteral("horizontalLayout_3"));
         horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
         horizontalLayout_3->addItem(horizontalSpacer);
 
         login_pushButton = new QPushButton(login);
-        login_pushButton->setObjectName(QString::fromUtf8("login_pushButton"));
+        login_pushButton->setObjectName(QStringLiteral("login_pushButton"));
         login_pushButton->setFont(font);
-        login_pushButton->setStyleSheet(QString::fromUtf8("QPushButton{\n"
+        login_pushButton->setStyleSheet(QLatin1String("QPushButton{\n"
 "	background-color: rgb(114, 159, 207)\n"
 "}"));
 
         horizontalLayout_3->addWidget(login_pushButton);
 
         register_pushButton = new QPushButton(login);
-        register_pushButton->setObjectName(QString::fromUtf8("register_pushButton"));
+        register_pushButton->setObjectName(QStringLiteral("register_pushButton"));
         register_pushButton->setFont(font);
-        register_pushButton->setStyleSheet(QString::fromUtf8("QPushButton{\n"
+        register_pushButton->setStyleSheet(QLatin1String("QPushButton{\n"
 "	background-color: rgb(186, 189, 182)\n"
 "}"));
 
@@ -152,15 +155,15 @@ public:
         verticalLayout->addLayout(horizontalLayout_3);
 
         horizontalLayout_4 = new QHBoxLayout();
-        horizontalLayout_4->setObjectName(QString::fromUtf8("horizontalLayout_4"));
+        horizontalLayout_4->setObjectName(QStringLiteral("horizontalLayout_4"));
         horizontalLayout_4->setContentsMargins(-1, -1, -1, 0);
         horizontalSpacer_7 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
         horizontalLayout_4->addItem(horizontalSpacer_7);
 
         delete_pushButton = new QPushButton(login);
-        delete_pushButton->setObjectName(QString::fromUtf8("delete_pushButton"));
-        delete_pushButton->setStyleSheet(QString::fromUtf8("QPushButton{\n"
+        delete_pushButton->setObjectName(QStringLiteral("delete_pushButton"));
+        delete_pushButton->setStyleSheet(QLatin1String("QPushButton{\n"
 "	background-color:  rgb(164, 0, 0);\n"
 "}"));
 
@@ -184,14 +187,14 @@ public:
 
     void retranslateUi(QDialog *login)
     {
-        login->setWindowTitle(QCoreApplication::translate("login", "Dialog", nullptr));
-        label->setText(QCoreApplication::translate("login", "Username:", nullptr));
-        username_lineEdit->setPlaceholderText(QCoreApplication::translate("login", "Enter username", nullptr));
-        label_2->setText(QCoreApplication::translate("login", "Password:", nullptr));
-        password_lineEdit->setPlaceholderText(QCoreApplication::translate("login", "Enter  password", nullptr));
-        login_pushButton->setText(QCoreApplication::translate("login", "Login", nullptr));
-        register_pushButton->setText(QCoreApplication::translate("login", "Register", nullptr));
-        delete_pushButton->setText(QCoreApplication::translate("login", "Delete Identity", nullptr));
+        login->setWindowTitle(QApplication::translate("login", "Dialog", Q_NULLPTR));
+        label->setText(QApplication::translate("login", "Username:", Q_NULLPTR));
+        username_lineEdit->setPlaceholderText(QApplication::translate("login", "Enter username", Q_NULLPTR));
+        label_2->setText(QApplication::translate("login", "Password:", Q_NULLPTR));
+        password_lineEdit->setPlaceholderText(QApplication::translate("login", "Enter  password", Q_NULLPTR));
+        login_pushButton->setText(QApplication::translate("login", "Login", Q_NULLPTR));
+        register_pushButton->setText(QApplication::translate("login", "Register", Q_NULLPTR));
+        delete_pushButton->setText(QApplication::translate("login", "Delete Identity", Q_NULLPTR));
     } // retranslateUi
 
 };

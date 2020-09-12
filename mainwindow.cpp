@@ -304,7 +304,7 @@ void MainWindow::pullUpEntriesDB()
 void MainWindow::createTypeCombo(int r, int _type){
     QStringList _types = {"Consumable", "Non-Consumable"};
     if(_type == 1){
-        _types.swapItemsAt(0,1);
+        _types.swap(0,1);
     }
     QComboBox *combo_Types =  new QComboBox();
     combo_Types->addItems(_types);
@@ -1116,7 +1116,7 @@ void MainWindow::auditCons(){
     dialog->exec();
 }
 QLineEdit* MainWindow::createSectionDropDown(){
-    QStringList sections = {"Wethering","CTC","CFU","Driers","Sorting","Packing","Boiler","Pallets","Automotive","Power Room","Green Leaf","Water plant"};
+    QStringList sections = {"Withering","CTC","CFU","Driers","Sorting","Packing","Boiler","Pallets","Automotive","Power Room","Green Leaf","Water plant","Workshop"};
     QCompleter *comp = new QCompleter(sections);
     comp->setCaseSensitivity(Qt::CaseInsensitive);
     comp->setFilterMode(Qt::MatchContains);
